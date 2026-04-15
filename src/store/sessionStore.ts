@@ -77,14 +77,15 @@ export const useSessionStore = create<SessionState>((set, get) => ({
     const side = derivePlayerSide(session, playerId)
     set({ session, playerSide: side })
 
-    // Trigger debate when both become ready — handles the case where this client
-    // submitted first and the opponent's submission arrives via Realtime.
-    // The Netlify function checks status='prompting' to prevent double-processing.
+    // Trigger debate only when we witness the transition to both-ready.
+    // Requires prev !== null so a page refresh (prev = null) never re-triggers
+    // a debate that's already running server-side.
     const bothJustReady =
+      prev !== null &&
       session.status === 'prompting' &&
       session.player_a?.ready &&
       session.player_b?.ready &&
-      !(prev?.player_a?.ready && prev?.player_b?.ready)
+      !(prev.player_a?.ready && prev.player_b?.ready)
 
     if (bothJustReady && side === 'a') {
       get().triggerDebate()

@@ -2,6 +2,7 @@ export interface Player {
   id: string
   name: string
   brief: string | null
+  tone: string | null
   ready: boolean
 }
 

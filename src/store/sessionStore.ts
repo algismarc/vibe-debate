@@ -16,7 +16,7 @@ interface SessionState {
   fetchSession: (joinCode: string) => Promise<void>
   createSession: (title: string, name: string, config?: Partial<Config>) => Promise<string>
   joinSession: (joinCode: string, name: string) => Promise<void>
-  submitBrief: (brief: string) => Promise<void>
+  submitBrief: (brief: string, tone?: string) => Promise<void>
   triggerDebate: () => Promise<void>
   subscribeToSession: (joinCode: string) => () => void
 
@@ -97,7 +97,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
     set({ loading: true, error: null })
 
     const joinCode = generateJoinCode()
-    const player_a = { id: playerId, name, brief: null, ready: false }
+    const player_a = { id: playerId, name, brief: null, tone: null, ready: false }
     const sessionConfig = {
       time_limit_seconds: 300,
       char_limit: null,
@@ -156,7 +156,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
       throw new Error('Session full')
     }
 
-    const player_b = { id: playerId, name, brief: null, ready: false }
+    const player_b = { id: playerId, name, brief: null, tone: null, ready: false }
 
     const { data, error } = await supabase
       .from('sessions')
@@ -177,7 +177,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
     })
   },
 
-  submitBrief: async (brief) => {
+  submitBrief: async (brief, tone) => {
     const { session, playerSide } = get()
     if (!session || !playerSide) return
 
@@ -185,7 +185,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
     const currentPlayer = session[playerKey]
     if (!currentPlayer) return
 
-    const updatedPlayer = { ...currentPlayer, brief, ready: true }
+    const updatedPlayer = { ...currentPlayer, brief, tone: tone ?? null, ready: true }
 
     const { data, error } = await supabase
       .from('sessions')

@@ -7,10 +7,20 @@ interface Props {
   session: Session
 }
 
+const TONES = [
+  { id: 'aggressive',   emoji: '🔥', label: 'Aggressive',  desc: 'Attack hard, expose every weakness' },
+  { id: 'logical',      emoji: '🧠', label: 'Logical',      desc: 'Calm, structured, evidence-first' },
+  { id: 'passionate',   emoji: '🎭', label: 'Passionate',   desc: 'Emotional, values-driven, inspiring' },
+  { id: 'sarcastic',    emoji: '😏', label: 'Sarcastic',    desc: 'Witty, cutting, dry humour' },
+  { id: 'conversational',emoji: '💬', label: 'Casual',      desc: 'Relaxed, relatable, talks to the crowd' },
+  { id: 'academic',     emoji: '🎓', label: 'Academic',     desc: 'Formal, thorough, citation-heavy' },
+]
+
 export default function PromptPhase({ session }: Props) {
   const { playerSide, submitBrief } = useSessionStore()
 
   const [brief, setBrief] = useState('')
+  const [tone, setTone] = useState<string | null>(null)
   const [submitted, setSubmitted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
@@ -21,19 +31,19 @@ export default function PromptPhase({ session }: Props) {
   const side = playerSide === 'a' ? 'FOR' : 'AGAINST'
   const sideColor = playerSide === 'a' ? 'text-purple-400' : 'text-green-400'
   const sideBg = playerSide === 'a' ? 'bg-purple-400/10 border-purple-400/30' : 'bg-green-400/10 border-green-400/30'
+  const accentBorder = playerSide === 'a' ? 'border-purple-500' : 'border-green-500'
+  const accentBg = playerSide === 'a' ? 'bg-purple-950/50' : 'bg-green-950/50'
 
   const hasTimeLimit = session.config.time_limit_seconds > 0
   const charLimit = session.config.char_limit
   const overLimit = charLimit !== null && brief.length > charLimit
 
-  // Restore submitted state if player already submitted (e.g. after refresh)
+  // Restore submitted state on refresh
   useEffect(() => {
-    if (myPlayer?.ready) {
-      setSubmitted(true)
-    }
+    if (myPlayer?.ready) setSubmitted(true)
   }, [myPlayer?.ready])
 
-  // Stable timer start time: stored in sessionStorage so refresh preserves it
+  // Timer start time persisted in sessionStorage
   const startedAt = useMemo(() => {
     const key = `vibe-debate-timer-${session.join_code}`
     let ts = sessionStorage.getItem(key)
@@ -50,7 +60,7 @@ export default function PromptPhase({ session }: Props) {
     setSubmitting(true)
     setSubmitError('')
     try {
-      await submitBrief(brief.trim())
+      await submitBrief(brief.trim(), tone ?? undefined)
       setSubmitted(true)
     } catch {
       setSubmitError('Failed to submit. Please try again.')
@@ -111,31 +121,59 @@ export default function PromptPhase({ session }: Props) {
         </div>
       )}
 
+      {/* Tone selector */}
+      <div className="w-full flex flex-col gap-2">
+        <label className="text-gray-400 text-sm font-medium">
+          Debater tone
+          <span className="text-gray-600 font-normal ml-1">— how should your AI argue?</span>
+        </label>
+        <div className="grid grid-cols-3 gap-2">
+          {TONES.map(t => {
+            const selected = tone === t.id
+            return (
+              <button
+                key={t.id}
+                type="button"
+                disabled={submitted}
+                onClick={() => setTone(selected ? null : t.id)}
+                className={`flex flex-col items-start gap-1 rounded-xl border p-3 text-left transition-all ${
+                  selected
+                    ? `${accentBorder} ${accentBg} border-2`
+                    : 'border-gray-800 bg-gray-900 hover:border-gray-700'
+                } ${submitted ? 'opacity-50 cursor-default' : 'cursor-pointer'}`}
+              >
+                <span className="text-xl leading-none">{t.emoji}</span>
+                <span className={`text-xs font-semibold ${selected ? sideColor : 'text-white'}`}>
+                  {t.label}
+                </span>
+                <span className="text-gray-600 text-xs leading-tight">{t.desc}</span>
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
       {/* Brief input */}
       <div className="w-full flex flex-col gap-2 flex-1">
-        <div className="flex items-center justify-between">
-          <label className="text-gray-400 text-sm font-medium">
-            Your strategy brief
-            <span className="text-gray-600 font-normal ml-1">— private coaching for your AI debater</span>
-          </label>
-        </div>
+        <label className="text-gray-400 text-sm font-medium">
+          Strategy brief
+          <span className="text-gray-600 font-normal ml-1">— private coaching for your AI debater</span>
+        </label>
 
         {submitted ? (
-          <div className="w-full min-h-40 bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-gray-400 text-sm leading-relaxed">
+          <div className="w-full min-h-32 bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-gray-400 text-sm leading-relaxed">
             {brief || <span className="italic text-gray-600">No brief submitted</span>}
           </div>
         ) : (
           <textarea
             value={brief}
             onChange={e => setBrief(e.target.value)}
-            placeholder={`Tell your AI debater how to argue ${side}. Tactics, tone, key points, what to attack...`}
-            className="w-full min-h-48 bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-600 resize-none focus:outline-none focus:border-purple-500 transition-colors text-sm leading-relaxed"
+            placeholder={`Key points to hit, what to attack, specific examples to use...`}
+            className="w-full min-h-36 bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-600 resize-none focus:outline-none focus:border-purple-500 transition-colors text-sm leading-relaxed"
             maxLength={charLimit ?? undefined}
-            autoFocus
           />
         )}
 
-        {/* Character counter */}
         {charLimit !== null && !submitted && (
           <p className={`text-xs text-right ${overLimit ? 'text-red-400' : 'text-gray-600'}`}>
             {brief.length} / {charLimit}
@@ -159,7 +197,7 @@ export default function PromptPhase({ session }: Props) {
           <div className="w-full flex flex-col items-center gap-3">
             <div className="flex items-center gap-2 text-green-400 text-sm font-medium">
               <span>✓</span>
-              <span>Brief submitted</span>
+              <span>Brief submitted{tone ? ` · ${TONES.find(t => t.id === tone)?.emoji} ${TONES.find(t => t.id === tone)?.label}` : ''}</span>
             </div>
             <OpponentStatus name={opponentPlayer?.name ?? 'Opponent'} ready={opponentReady} />
           </div>

@@ -21,6 +21,7 @@ interface Player {
   id: string
   name: string
   brief: string | null
+  tone: string | null
   ready: boolean
 }
 
@@ -160,7 +161,7 @@ export default async (req: Request) => {
       messages: [
         {
           role: 'user',
-          content: buildDebatePrompt(s.title, s.player_a.brief, s.player_b.brief),
+          content: buildDebatePrompt(s.title, s.player_a, s.player_b),
         },
       ],
     })
@@ -259,18 +260,23 @@ export default async (req: Request) => {
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-function buildDebatePrompt(title: string, briefFor: string, briefAgainst: string): string {
+function buildDebatePrompt(title: string, playerA: Player, playerB: Player): string {
+  const toneInstruction = (tone: string | null) =>
+    tone ? `Tone: ${tone} — let this define the voice and manner of delivery throughout.` : 'Tone: balanced and professional.'
+
   return `Debate topic: "${title}"
 
 FOR strategist's brief:
 ---
-${briefFor}
+${playerA.brief}
 ---
+${toneInstruction(playerA.tone)}
 
 AGAINST strategist's brief:
 ---
-${briefAgainst}
+${playerB.brief}
 ---
+${toneInstruction(playerB.tone)}
 
 Write the debate now.`
 }

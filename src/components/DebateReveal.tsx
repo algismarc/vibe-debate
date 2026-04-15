@@ -51,21 +51,7 @@ export default function DebateReveal({ session }: Props) {
 
   // No transcript yet — debate is still being generated
   if (!debate_transcript) {
-    return (
-      <main className="flex flex-col items-center justify-center min-h-svh p-4 gap-4">
-        <div className="flex gap-2">
-          {[0, 1, 2].map(i => (
-            <span
-              key={i}
-              className="w-2.5 h-2.5 rounded-full bg-purple-500 animate-bounce"
-              style={{ animationDelay: `${i * 0.15}s` }}
-            />
-          ))}
-        </div>
-        <p className="text-gray-400 font-medium">AI debaters are arguing...</p>
-        <p className="text-gray-600 text-sm">This usually takes about 30 seconds</p>
-      </main>
-    )
+    return <DebatingLoader />
   }
 
   const allTurnsVisible = visibleTurns >= totalTurns
@@ -301,6 +287,106 @@ function Scorecard({
 function CountUpCell({ target, delay }: { target: number; delay: number }) {
   const value = useCountUp(target, 700, delay)
   return <>{value}</>
+}
+
+// ─── Debating loader ─────────────────────────────────────────────────────────
+
+const QUOTES = [
+  { text: "The aim of argument, or of discussion, should not be victory, but progress.", author: "Joseph Joubert" },
+  { text: "He who knows only his own side of the case knows little of that.", author: "John Stuart Mill" },
+  { text: "Discussion is an exchange of knowledge; argument is merely an exchange of ignorance.", author: "Robert Quillen" },
+  { text: "In a heated argument, we are apt to lose sight of the truth.", author: "Publilius Syrus" },
+  { text: "If you can't answer a man's argument, all is not lost; you can still call him vile names.", author: "Elbert Hubbard" },
+  { text: "Wise men argue causes; fools decide them.", author: "Anacharsis" },
+  { text: "I never learned anything while I was talking.", author: "Larry King" },
+  { text: "Strong minds discuss ideas, average minds discuss events, weak minds discuss people.", author: "Socrates" },
+  { text: "It usually takes more than three weeks to prepare a good impromptu speech.", author: "Mark Twain" },
+  { text: "The most courageous act is still to think for yourself. Aloud.", author: "Coco Chanel" },
+]
+
+// Organic progress: fast burst early, slows as it creeps toward ~91%
+const PROGRESS_STEPS = [
+  { ms: 300,   pct: 9  },
+  { ms: 1200,  pct: 18 },
+  { ms: 2500,  pct: 28 },
+  { ms: 4200,  pct: 38 },
+  { ms: 6500,  pct: 47 },
+  { ms: 9000,  pct: 55 },
+  { ms: 12000, pct: 62 },
+  { ms: 15500, pct: 68 },
+  { ms: 19000, pct: 73 },
+  { ms: 23000, pct: 77 },
+  { ms: 27500, pct: 80 },
+  { ms: 32000, pct: 83 },
+  { ms: 38000, pct: 86 },
+  { ms: 46000, pct: 88 },
+  { ms: 56000, pct: 91 },
+]
+
+function DebatingLoader() {
+  const [progress, setProgress] = useState(0)
+  const [quoteIdx, setQuoteIdx] = useState(() => Math.floor(Math.random() * QUOTES.length))
+  const [quoteKey, setQuoteKey] = useState(0)
+
+  // Organic fake progress
+  useEffect(() => {
+    const ids = PROGRESS_STEPS.map(({ ms, pct }) =>
+      setTimeout(() => setProgress(pct), ms)
+    )
+    return () => ids.forEach(clearTimeout)
+  }, [])
+
+  // Cycle quotes every 6 seconds
+  useEffect(() => {
+    const id = setInterval(() => {
+      setQuoteIdx(i => (i + 1) % QUOTES.length)
+      setQuoteKey(k => k + 1)
+    }, 6000)
+    return () => clearInterval(id)
+  }, [])
+
+  const quote = QUOTES[quoteIdx]
+
+  return (
+    <main className="flex flex-col items-center justify-center min-h-svh p-4 gap-8">
+      {/* Status */}
+      <div className="flex flex-col items-center gap-3">
+        <div className="flex gap-2">
+          {[0, 1, 2].map(i => (
+            <span
+              key={i}
+              className="w-2.5 h-2.5 rounded-full bg-purple-500 animate-bounce"
+              style={{ animationDelay: `${i * 0.15}s` }}
+            />
+          ))}
+        </div>
+        <p className="text-gray-300 font-semibold">AI debaters are arguing...</p>
+        <p className="text-gray-600 text-sm">This usually takes about 30 seconds</p>
+      </div>
+
+      {/* Organic loading bar */}
+      <div className="w-full max-w-xs flex flex-col gap-2">
+        <div className="w-full h-1.5 bg-gray-800 rounded-full overflow-hidden">
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-purple-700 via-purple-400 to-fuchsia-400 transition-all ease-out"
+            style={{
+              width: `${progress}%`,
+              transitionDuration: progress < 30 ? '800ms' : progress < 65 ? '1400ms' : '2200ms',
+            }}
+          />
+        </div>
+        <p className="text-gray-700 text-xs text-right tabular-nums">{progress}%</p>
+      </div>
+
+      {/* Cycling quote */}
+      <div className="w-full max-w-sm min-h-[80px] flex flex-col items-center justify-center text-center px-2">
+        <div key={quoteKey} className="animate-fadeIn flex flex-col gap-2">
+          <p className="text-gray-400 text-sm italic leading-relaxed">"{quote.text}"</p>
+          <p className="text-gray-600 text-xs">— {quote.author}</p>
+        </div>
+      </div>
+    </main>
+  )
 }
 
 function Actions({ session }: { session: Session }) {

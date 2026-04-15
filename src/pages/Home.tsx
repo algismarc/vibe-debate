@@ -43,16 +43,19 @@ export default function Home() {
   return (
     <main className="flex flex-col items-center justify-center min-h-svh p-4 gap-8">
       {/* Header */}
-      <div className="text-center">
+      <div className="text-center animate-fadeUp" style={{ animationDelay: '0ms' }}>
         <h1 className="text-5xl font-bold tracking-tight text-white mb-2">
-          Vibe<span className="text-purple-400">Debate</span>
+          Vibe<span className="animate-shimmer">Debate</span>
         </h1>
         <p className="text-gray-400">AI-powered debate battles between friends</p>
       </div>
 
       <div className="w-full max-w-md flex flex-col gap-4">
         {/* Start a Debate */}
-        <section className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+        <section
+          className="bg-gray-900 border border-gray-800 rounded-2xl p-6 animate-fadeUp"
+          style={{ animationDelay: '120ms' }}
+        >
           <h2 className="text-white font-semibold text-lg mb-4 flex items-center gap-2">
             <span className="text-purple-400">⚡</span> Start a Debate
           </h2>
@@ -64,7 +67,7 @@ export default function Home() {
                 value={title}
                 onChange={e => setTitle(e.target.value)}
                 placeholder="e.g. Pineapple belongs on pizza"
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-purple-500 transition-colors"
+                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all"
                 maxLength={120}
               />
             </div>
@@ -75,7 +78,7 @@ export default function Home() {
                 value={name}
                 onChange={e => setName(e.target.value)}
                 placeholder="You'll be arguing FOR"
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-purple-500 transition-colors"
+                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all"
                 maxLength={30}
               />
             </div>
@@ -84,7 +87,7 @@ export default function Home() {
               <select
                 value={timeLimit}
                 onChange={e => setTimeLimit(e.target.value)}
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-purple-500 transition-colors"
+                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all"
               >
                 <option value="60">1 minute</option>
                 <option value="120">2 minutes</option>
@@ -99,7 +102,7 @@ export default function Home() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-purple-600 hover:bg-purple-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-lg px-6 py-3 transition-colors mt-1"
+              className="w-full bg-purple-600 hover:bg-purple-500 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-lg px-6 py-3 transition-all mt-1"
             >
               {loading ? 'Creating...' : 'Create Session →'}
             </button>
@@ -107,14 +110,20 @@ export default function Home() {
         </section>
 
         {/* Divider */}
-        <div className="flex items-center gap-4">
+        <div
+          className="flex items-center gap-4 animate-fadeUp"
+          style={{ animationDelay: '220ms' }}
+        >
           <div className="flex-1 h-px bg-gray-800" />
           <span className="text-gray-600 text-sm">or</span>
           <div className="flex-1 h-px bg-gray-800" />
         </div>
 
         {/* Join a Debate */}
-        <section className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+        <section
+          className="bg-gray-900 border border-gray-800 rounded-2xl p-6 animate-fadeUp"
+          style={{ animationDelay: '300ms' }}
+        >
           <h2 className="text-white font-semibold text-lg mb-4 flex items-center gap-2">
             <span className="text-green-400">🔗</span> Join a Debate
           </h2>
@@ -126,7 +135,7 @@ export default function Home() {
                 value={joinCode}
                 onChange={e => setJoinCode(e.target.value.toUpperCase().slice(0, 6))}
                 placeholder="ABCDEF"
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-600 font-mono text-xl tracking-widest text-center focus:outline-none focus:border-green-500 transition-colors"
+                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-600 font-mono text-xl tracking-widest text-center focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all"
                 maxLength={6}
                 autoComplete="off"
               />
@@ -136,7 +145,7 @@ export default function Home() {
             )}
             <button
               type="submit"
-              className="w-full bg-gray-800 hover:bg-gray-700 border border-gray-700 text-white font-semibold rounded-lg px-6 py-3 transition-colors"
+              className="w-full bg-gray-800 hover:bg-gray-700 active:scale-95 border border-gray-700 text-white font-semibold rounded-lg px-6 py-3 transition-all"
             >
               Join Session →
             </button>

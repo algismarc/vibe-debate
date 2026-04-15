@@ -161,7 +161,7 @@ export default function DebateReveal({ session }: Props) {
             winner={judgment.winner}
           />
 
-          <div className="w-full bg-gray-900 border border-gray-800 rounded-2xl p-5">
+          <div className="w-full bg-gray-900 border border-gray-800 rounded-2xl p-5 animate-fadeIn" style={{ animationDelay: '0.6s', opacity: 0 }}>
             <p className="text-gray-500 text-xs uppercase tracking-widest mb-3">Ruling</p>
             <p className="text-gray-300 text-sm leading-relaxed">{judgment.summary}</p>
           </div>
@@ -189,10 +189,11 @@ function WinnerCard({
   const winnerSide = winner === 'for' ? 'FOR' : winner === 'against' ? 'AGAINST' : null
   const color = isTie ? 'text-yellow-400' : winner === 'for' ? 'text-purple-400' : 'text-green-400'
   const border = isTie ? 'border-yellow-500/40' : winner === 'for' ? 'border-purple-500/40' : 'border-green-500/40'
+  const glow = isTie ? 'animate-glowYellow' : winner === 'for' ? 'animate-glowPurple' : 'animate-glowGreen'
 
   return (
-    <div className={`w-full bg-gray-900 border-2 ${border} rounded-2xl p-6 text-center`}>
-      <p className="text-3xl mb-2">{isTie ? '🤝' : '🏆'}</p>
+    <div className={`w-full bg-gray-900 border-2 ${border} ${glow} rounded-2xl p-6 text-center animate-bounceIn`}>
+      <p className="text-4xl mb-2 animate-trophyBounce">{isTie ? '🤝' : '🏆'}</p>
       <p className={`text-xs font-bold uppercase tracking-widest mb-1 ${color}`}>
         {isTie ? 'Result' : `Winner — ${winnerSide}`}
       </p>
@@ -210,6 +211,27 @@ const CRITERIA = [
   { key: 'rhetoric' as const, label: 'Rhetoric' },
 ]
 
+// Smooth count-up hook using rAF + easeOutQuart
+function useCountUp(target: number, duration = 900, delay = 0) {
+  const [value, setValue] = useState(0)
+  useEffect(() => {
+    setValue(0)
+    if (target === 0) return
+    const timeout = setTimeout(() => {
+      const start = performance.now()
+      const frame = (now: number) => {
+        const progress = Math.min((now - start) / duration, 1)
+        const eased = 1 - Math.pow(1 - progress, 4) // easeOutQuart
+        setValue(Math.round(eased * target))
+        if (progress < 1) requestAnimationFrame(frame)
+      }
+      requestAnimationFrame(frame)
+    }, delay)
+    return () => clearTimeout(timeout)
+  }, [target, duration, delay])
+  return value
+}
+
 function Scorecard({
   forName,
   againstName,
@@ -223,31 +245,41 @@ function Scorecard({
   againstScores: Scores
   winner: 'for' | 'against' | 'tie'
 }) {
+  // Count-up totals
+  const forTotal = useCountUp(forScores.total, 1000, 300)
+  const againstTotal = useCountUp(againstScores.total, 1000, 300)
+
   return (
-    <div className="w-full bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
+    <div className="w-full bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden animate-fadeIn" style={{ animationDelay: '0.2s', opacity: 0 }}>
       <div className="grid grid-cols-3 text-xs font-bold uppercase tracking-widest border-b border-gray-800">
         <div className={`px-3 py-3 text-purple-400 min-w-0 ${winner === 'for' ? 'bg-purple-950/40' : ''}`}>
           <span className="block truncate">{forName}</span>
           <span className="opacity-50">FOR</span>
         </div>
-        <div className="px-2 py-3 text-gray-600 text-center">vs</div>
+        <div className="px-2 py-3 text-gray-600 text-center animate-vsSpark">vs</div>
         <div className={`px-3 py-3 text-green-400 text-right min-w-0 ${winner === 'against' ? 'bg-green-950/40' : ''}`}>
           <span className="block truncate">{againstName}</span>
           <span className="opacity-50">AGAINST</span>
         </div>
       </div>
 
-      {CRITERIA.map(({ key, label }) => {
+      {CRITERIA.map(({ key, label }, i) => {
         const f = forScores[key]
         const a = againstScores[key]
         return (
-          <div key={key} className="grid grid-cols-3 border-b border-gray-800/60 last:border-0">
+          <div
+            key={key}
+            className="grid grid-cols-3 border-b border-gray-800/60 last:border-0 animate-rowReveal"
+            style={{ animationDelay: `${i * 100 + 350}ms` }}
+          >
             <div className={`px-4 py-3 text-sm font-bold ${f > a ? 'text-purple-300' : 'text-gray-400'}`}>
-              {f}<span className="text-gray-600 font-normal">/10</span>
+              <CountUpCell target={f} delay={i * 100 + 350} />
+              <span className="text-gray-600 font-normal">/10</span>
             </div>
             <div className="px-4 py-3 text-gray-600 text-xs text-center self-center">{label}</div>
             <div className={`px-4 py-3 text-sm font-bold text-right ${a > f ? 'text-green-300' : 'text-gray-400'}`}>
-              {a}<span className="text-gray-600 font-normal">/10</span>
+              <CountUpCell target={a} delay={i * 100 + 350} />
+              <span className="text-gray-600 font-normal">/10</span>
             </div>
           </div>
         )
@@ -255,15 +287,20 @@ function Scorecard({
 
       <div className="grid grid-cols-3 border-t-2 border-gray-700 bg-gray-800/40">
         <div className={`px-4 py-3 text-lg font-bold ${winner === 'for' ? 'text-purple-300' : 'text-gray-300'}`}>
-          {forScores.total}<span className="text-gray-600 text-sm font-normal">/40</span>
+          {forTotal}<span className="text-gray-600 text-sm font-normal">/40</span>
         </div>
         <div className="px-4 py-3 text-gray-600 text-xs text-center self-center uppercase tracking-widest">Total</div>
         <div className={`px-4 py-3 text-lg font-bold text-right ${winner === 'against' ? 'text-green-300' : 'text-gray-300'}`}>
-          {againstScores.total}<span className="text-gray-600 text-sm font-normal">/40</span>
+          {againstTotal}<span className="text-gray-600 text-sm font-normal">/40</span>
         </div>
       </div>
     </div>
   )
+}
+
+function CountUpCell({ target, delay }: { target: number; delay: number }) {
+  const value = useCountUp(target, 700, delay)
+  return <>{value}</>
 }
 
 function Actions({ session }: { session: Session }) {
@@ -301,13 +338,13 @@ function Actions({ session }: { session: Session }) {
     <div className="flex flex-col gap-3">
       <button
         onClick={handleShare}
-        className="w-full bg-gray-800 hover:bg-gray-700 border border-gray-700 text-white font-semibold rounded-xl px-6 py-3 transition-colors"
+        className="w-full bg-gray-800 hover:bg-gray-700 active:scale-95 border border-gray-700 text-white font-semibold rounded-xl px-6 py-3 transition-all"
       >
         {copied ? '✓ Copied!' : '📋 Share Results'}
       </button>
       <button
         onClick={() => navigate('/')}
-        className="w-full bg-purple-600 hover:bg-purple-500 text-white font-semibold rounded-xl px-6 py-3 transition-colors"
+        className="w-full bg-purple-600 hover:bg-purple-500 active:scale-95 text-white font-semibold rounded-xl px-6 py-3 transition-all"
       >
         New Debate →
       </button>

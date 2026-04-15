@@ -1,14 +1,22 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useSessionStore } from '../store/sessionStore'
 
 export default function Join() {
   const { joinCode } = useParams<{ joinCode: string }>()
   const navigate = useNavigate()
-  const { joinSession, loading, error } = useSessionStore()
+  const { session, loading, error, fetchSession, joinSession } = useSessionStore()
 
   const [name, setName] = useState('')
   const [formError, setFormError] = useState('')
+
+  // Fetch the session so we can show the debate topic
+  useEffect(() => {
+    if (!joinCode) return
+    if (!session || session.join_code !== joinCode) {
+      fetchSession(joinCode)
+    }
+  }, [joinCode])
 
   async function handleJoin(e: React.FormEvent) {
     e.preventDefault()
@@ -24,24 +32,44 @@ export default function Join() {
     }
   }
 
+  const topic = session?.join_code === joinCode ? session?.title : null
+
   return (
     <main className="flex flex-col items-center justify-center min-h-svh p-4">
       <div className="w-full max-w-sm flex flex-col gap-6">
+        {/* Header */}
         <div className="text-center">
           <h1 className="text-4xl font-bold text-white mb-1">
             Vibe<span className="text-purple-400">Debate</span>
           </h1>
           <p className="text-gray-500 text-sm">
-            Joining session{' '}
-            <span className="font-mono text-green-400 tracking-widest">{joinCode}</span>
+            You've been challenged to a debate
           </p>
         </div>
 
-        <section className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
-          <h2 className="text-white font-semibold text-lg mb-1">You're the AGAINST side</h2>
-          <p className="text-gray-500 text-sm mb-5">
-            You'll be arguing against the topic. Enter your name to continue.
+        {/* Topic card */}
+        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5 text-center">
+          <p className="text-gray-500 text-xs uppercase tracking-widest mb-2">Debate Topic</p>
+          {loading && !topic ? (
+            <div className="flex justify-center gap-1.5 py-2">
+              {[0, 1, 2].map(i => (
+                <span
+                  key={i}
+                  className="w-1.5 h-1.5 rounded-full bg-gray-700 animate-pulse"
+                  style={{ animationDelay: `${i * 0.2}s` }}
+                />
+              ))}
+            </div>
+          ) : (
+            <p className="text-white font-bold text-xl leading-snug">"{topic}"</p>
+          )}
+          <p className="text-green-400 text-xs font-semibold uppercase tracking-widest mt-3">
+            You'll be arguing AGAINST
           </p>
+        </div>
+
+        {/* Join form */}
+        <section className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
           <form onSubmit={handleJoin} className="flex flex-col gap-3">
             <div>
               <label className="text-gray-400 text-sm mb-1 block">Your name</label>
@@ -55,7 +83,7 @@ export default function Join() {
                 maxLength={30}
               />
             </div>
-            {(formError) && (
+            {formError && (
               <p className="text-red-400 text-sm">{formError}</p>
             )}
             <button

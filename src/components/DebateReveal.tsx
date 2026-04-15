@@ -226,12 +226,14 @@ function Scorecard({
   return (
     <div className="w-full bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
       <div className="grid grid-cols-3 text-xs font-bold uppercase tracking-widest border-b border-gray-800">
-        <div className={`px-4 py-3 text-purple-400 ${winner === 'for' ? 'bg-purple-950/40' : ''}`}>
-          {forName} <span className="opacity-50">FOR</span>
+        <div className={`px-3 py-3 text-purple-400 min-w-0 ${winner === 'for' ? 'bg-purple-950/40' : ''}`}>
+          <span className="block truncate">{forName}</span>
+          <span className="opacity-50">FOR</span>
         </div>
-        <div className="px-4 py-3 text-gray-600 text-center">Criteria</div>
-        <div className={`px-4 py-3 text-green-400 text-right ${winner === 'against' ? 'bg-green-950/40' : ''}`}>
-          <span className="opacity-50">AGAINST </span>{againstName}
+        <div className="px-2 py-3 text-gray-600 text-center">vs</div>
+        <div className={`px-3 py-3 text-green-400 text-right min-w-0 ${winner === 'against' ? 'bg-green-950/40' : ''}`}>
+          <span className="block truncate">{againstName}</span>
+          <span className="opacity-50">AGAINST</span>
         </div>
       </div>
 

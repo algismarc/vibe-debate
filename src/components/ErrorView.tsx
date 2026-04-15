@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom'
 import { useSessionStore } from '../store/sessionStore'
 
 interface Props {
@@ -6,11 +7,12 @@ interface Props {
 }
 
 export default function ErrorView({ message, sessionId }: Props) {
-  const { triggerDebate, loading } = useSessionStore()
+  const navigate = useNavigate()
+  const { retryDebate, loading } = useSessionStore()
 
   async function handleRetry() {
     if (!sessionId) return
-    await triggerDebate()
+    await retryDebate()
   }
 
   return (
@@ -19,17 +21,25 @@ export default function ErrorView({ message, sessionId }: Props) {
         <div>
           <p className="text-4xl mb-3">⚠️</p>
           <h2 className="text-white font-bold text-lg mb-2">Something went wrong</h2>
-          <p className="text-gray-400 text-sm">{message}</p>
+          <p className="text-gray-400 text-sm leading-relaxed">{message}</p>
         </div>
-        {sessionId && (
+        <div className="flex flex-col gap-2">
+          {sessionId && (
+            <button
+              onClick={handleRetry}
+              disabled={loading}
+              className="w-full bg-red-800 hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-lg px-6 py-3 transition-colors"
+            >
+              {loading ? 'Retrying...' : 'Retry Debate'}
+            </button>
+          )}
           <button
-            onClick={handleRetry}
-            disabled={loading}
-            className="w-full bg-red-800 hover:bg-red-700 disabled:opacity-50 text-white font-semibold rounded-lg px-6 py-3 transition-colors"
+            onClick={() => navigate('/')}
+            className="w-full text-gray-500 hover:text-gray-300 text-sm py-2 transition-colors"
           >
-            {loading ? 'Retrying...' : 'Retry'}
+            ← Back to home
           </button>
-        )}
+        </div>
       </div>
     </main>
   )

@@ -18,6 +18,8 @@ interface SessionState {
   joinSession: (joinCode: string, name: string) => Promise<void>
   submitBrief: (brief: string, tone?: string) => Promise<void>
   triggerDebate: () => Promise<void>
+  retryDebate: () => Promise<void>
+  cancelSession: () => Promise<void>
   subscribeToSession: (joinCode: string) => () => void
 
   // Internal
@@ -217,6 +219,37 @@ export const useSessionStore = create<SessionState>((set, get) => ({
     } catch (err) {
       console.error('Failed to trigger debate function:', err)
     }
+  },
+
+  retryDebate: async () => {
+    const { session } = get()
+    if (!session) return
+
+    set({ loading: true, error: null })
+
+    // Reset status back to 'prompting' so the function will accept the request
+    const { error } = await supabase
+      .from('sessions')
+      .update({ status: 'prompting', error_message: null })
+      .eq('id', session.id)
+
+    if (error) {
+      set({ loading: false, error: 'Retry failed — please refresh the page.' })
+      return
+    }
+
+    set({ loading: false })
+    await get().triggerDebate()
+  },
+
+  cancelSession: async () => {
+    const { session } = get()
+    if (!session) return
+
+    await supabase
+      .from('sessions')
+      .update({ status: 'error', error_message: 'Session was cancelled by the host.' })
+      .eq('id', session.id)
   },
 
   subscribeToSession: (joinCode) => {

@@ -73,11 +73,22 @@ export const useSessionStore = create<SessionState>((set, get) => ({
   },
 
   setSession: (session) => {
-    const { playerId } = get()
-    set({
-      session,
-      playerSide: derivePlayerSide(session, playerId),
-    })
+    const { playerId, session: prev } = get()
+    const side = derivePlayerSide(session, playerId)
+    set({ session, playerSide: side })
+
+    // Trigger debate when both become ready — handles the case where this client
+    // submitted first and the opponent's submission arrives via Realtime.
+    // The Netlify function checks status='prompting' to prevent double-processing.
+    const bothJustReady =
+      session.status === 'prompting' &&
+      session.player_a?.ready &&
+      session.player_b?.ready &&
+      !(prev?.player_a?.ready && prev?.player_b?.ready)
+
+    if (bothJustReady && side === 'a') {
+      get().triggerDebate()
+    }
   },
 
   createSession: async (title, name, config) => {
@@ -188,17 +199,8 @@ export const useSessionStore = create<SessionState>((set, get) => ({
     }
 
     get().setSession(data)
-
-    // Check if both players are ready — trigger debate if so
-    const updated = data as Session
-    const aReady = updated.player_a?.ready
-    const bReady = updated.player_b?.ready
-    if (aReady && bReady) {
-      // Only one client should trigger; use player_a as the designated trigger
-      if (playerSide === 'a') {
-        await get().triggerDebate()
-      }
-    }
+    // Both-ready detection is handled inside setSession so it also fires
+    // when the other player's update arrives via Realtime.
   },
 
   triggerDebate: async () => {

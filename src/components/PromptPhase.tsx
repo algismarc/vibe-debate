@@ -12,7 +12,7 @@ const TONES = [
   { id: 'logical',      emoji: '🧠', label: 'Logical',      desc: 'Calm, structured, evidence-first' },
   { id: 'passionate',   emoji: '🎭', label: 'Passionate',   desc: 'Emotional, values-driven, inspiring' },
   { id: 'sarcastic',    emoji: '😏', label: 'Sarcastic',    desc: 'Witty, cutting, dry humour' },
-  { id: 'conversational',emoji: '💬', label: 'Casual',      desc: 'Relaxed, relatable, talks to the crowd' },
+  { id: 'sensual',       emoji: '💋', label: 'Sensual',     desc: 'Seductive, alluring, dangerously charming' },
   { id: 'academic',     emoji: '🎓', label: 'Academic',     desc: 'Formal, thorough, citation-heavy' },
 ]
 

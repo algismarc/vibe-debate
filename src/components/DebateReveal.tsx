@@ -4,8 +4,8 @@ import type { Session, Scores } from '../lib/types'
 import { parseTranscript, countTurns } from '../lib/parseTranscript'
 import Transcript from './Transcript'
 
-const TURN_INTERVAL_MS = 7000   // 7 seconds between each turn
-const VERDICT_DELAY_MS = 5000   // 5 seconds after last turn before showing verdict
+const TURN_INTERVAL_MS = 5000   // 5 seconds between each turn
+const VERDICT_DELAY_MS = 4000   // 4 seconds after last turn before showing verdict
 
 interface Props {
   session: Session

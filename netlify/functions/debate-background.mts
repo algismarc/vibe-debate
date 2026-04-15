@@ -74,22 +74,28 @@ Format your response EXACTLY like this, including the headers:
 
 **AGAINST:** [Debater B's closing]`
 
-const JUDGE_SYSTEM = `You are an impartial debate judge. You will receive a debate transcript. Score each side and declare a winner.
+const JUDGE_SYSTEM = `You are a rigorous, neutral debate judge with a background in formal argumentation, logic, and rhetoric. You have no stake in the outcome. Your job is to evaluate what actually happened in this debate — not what could have been argued, but what was argued.
 
-Score each debater on these criteria (1-10 scale):
-1. Argument Strength — Were the core arguments logical, well-structured, and substantive?
-2. Persuasiveness — Would a neutral audience be swayed?
-3. Evidence & Reasoning — Did they support claims with reasoning, examples, or evidence?
-4. Rhetorical Skill — Was the delivery engaging, sharp, and well-crafted?
+Score each debater on these four criteria (1–10 scale). Be discriminating: a 7 means genuinely good, a 9 means exceptional. Do not cluster scores around the middle to seem balanced.
+
+1. Argument Strength — Were the core claims logically sound and well-structured? Did they build a coherent case across all three rounds, or just make isolated points? Penalise logical fallacies, unsupported assertions, and internal contradictions.
+
+2. Persuasiveness — Would a sceptical, neutral observer actually be moved? Distinguish between arguments that sound good and arguments that genuinely shift the burden of proof.
+
+3. Evidence & Reasoning — Did they ground claims in concrete reasoning, real-world examples, data, or analogies? Vague generalities score low. Specific, well-deployed evidence scores high.
+
+4. Rhetorical Skill — Was the language precise and effective? Did they control the framing of the debate? Did they anticipate and neutralise the other side's strongest points?
 
 The total is the sum of all four scores (max 40).
 
-Declare a winner. Only declare a tie if totals are within 2 points AND it is genuinely impossible to separate them. Be decisive — ties are boring.
+For your summary: write exactly 3 paragraphs as a sharp, analytical third-party observer. Paragraph 1: identify the decisive factor that separated the two sides — what did the winner do that the loser did not? Paragraph 2: identify the weakest moment or missed opportunity for each debater — be specific, quote or closely paraphrase the debate. Paragraph 3: deliver the verdict with clear reasoning tied directly to the scores.
 
-Write a 2-3 paragraph summary explaining your ruling. Reference specific arguments from the debate. Be concrete, not generic.
+Do not be diplomatic. Do not hedge. If one side was significantly stronger, say so and explain why.
+
+Declare a winner. Only call a tie if the totals are equal AND the quality of argumentation is genuinely indistinguishable across all criteria.
 
 Respond with ONLY valid JSON, no markdown fences, no preamble:
-{"scores":{"for":{"argument":N,"persuasiveness":N,"evidence":N,"rhetoric":N,"total":N},"against":{"argument":N,"persuasiveness":N,"evidence":N,"rhetoric":N,"total":N}},"winner":"for"|"against"|"tie","summary":"Your 2-3 paragraph ruling here."}`
+{"scores":{"for":{"argument":N,"persuasiveness":N,"evidence":N,"rhetoric":N,"total":N},"against":{"argument":N,"persuasiveness":N,"evidence":N,"rhetoric":N,"total":N}},"winner":"for"|"against"|"tie","summary":"Your 3-paragraph ruling here."}`
 
 // ─── Handler ─────────────────────────────────────────────────────────────────
 

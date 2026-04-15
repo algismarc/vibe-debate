@@ -3,8 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useSessionStore } from '../store/sessionStore'
 import Lobby from '../components/Lobby'
 import PromptPhase from '../components/PromptPhase'
-import DebateView from '../components/DebateView'
-import ResultsView from '../components/ResultsView'
+import DebateReveal from '../components/DebateReveal'
 import ErrorView from '../components/ErrorView'
 
 export default function Session() {
@@ -63,9 +62,8 @@ export default function Session() {
       return <PromptPhase session={session} />
     case 'debating':
     case 'judging':
-      return <DebateView session={session} />
     case 'complete':
-      return <ResultsView session={session} />
+      return <DebateReveal session={session} />
     case 'error':
       return (
         <ErrorView

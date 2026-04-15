@@ -111,7 +111,7 @@ export default function ResultsView({ session }: Props) {
           </div>
         </>
       ) : (
-        debate_transcript && <Transcript transcript={debate_transcript} />
+        debate_transcript && <Transcript transcript={debate_transcript} visibleTurns={Infinity} />
       )}
 
       {/* Actions */}

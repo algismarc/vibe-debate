@@ -13,6 +13,7 @@ interface SessionState {
   playerSide: 'a' | 'b' | null
 
   // Actions
+  fetchSession: (joinCode: string) => Promise<void>
   createSession: (title: string, name: string, config?: Partial<Config>) => Promise<string>
   joinSession: (joinCode: string, name: string) => Promise<void>
   submitBrief: (brief: string) => Promise<void>
@@ -53,6 +54,23 @@ export const useSessionStore = create<SessionState>((set, get) => ({
   error: null,
   playerId: getOrCreatePlayerId(),
   playerSide: null,
+
+  fetchSession: async (joinCode) => {
+    set({ loading: true, error: null })
+    const { data, error } = await supabase
+      .from('sessions')
+      .select()
+      .eq('join_code', joinCode.toUpperCase())
+      .single()
+
+    if (error || !data) {
+      set({ loading: false, error: 'Session not found.' })
+      return
+    }
+
+    get().setSession(data)
+    set({ loading: false })
+  },
 
   setSession: (session) => {
     const { playerId } = get()

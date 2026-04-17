@@ -61,7 +61,7 @@ export default function SplashScreen({ onDone }: Props) {
       <h1
         style={{
           margin: 0,
-          fontFamily: "'Gotham Ultra', system-ui, sans-serif",
+          fontFamily: "'GFS Heraklit', Georgia, serif",
           fontSize: '2.25rem',
           color: '#ce6838',
           letterSpacing: '-0.02em',

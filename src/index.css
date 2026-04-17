@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
 @font-face {
-  font-family: 'Gotham Ultra';
-  src: url('/fonts/GothamUltra.otf') format('opentype');
-  font-weight: 900;
+  font-family: 'GFS Heraklit';
+  src: url('/fonts/GFSHeraklit.otf') format('opentype');
+  font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
@@ -74,13 +74,13 @@ body {
   margin: 0;
   background: #0e0806;
   color: #eddcc8;
-  font-family: 'Gotham Ultra', system-ui, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'GFS Heraklit', Georgia, 'Book Antiqua', serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 h1, h2, h3 {
-  font-family: 'Gotham Ultra', system-ui, sans-serif;
+  font-family: 'GFS Heraklit', Georgia, serif;
 }
 
 #root {

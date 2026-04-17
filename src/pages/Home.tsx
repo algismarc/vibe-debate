@@ -53,7 +53,7 @@ export default function Home() {
       <div className="w-full max-w-md flex flex-col gap-4">
         {/* Start a Debate */}
         <section
-          className="rothko-panel animate-fadeUp"
+          className="bg-gray-900 border border-gray-700 rounded-xl p-6 animate-fadeUp"
           style={{ animationDelay: '120ms' }}
         >
           <h2 className="text-white font-semibold text-lg mb-4 flex items-center gap-2">
@@ -121,7 +121,7 @@ export default function Home() {
 
         {/* Join a Debate */}
         <section
-          className="rothko-panel animate-fadeUp"
+          className="bg-gray-900 border border-gray-700 rounded-xl p-6 animate-fadeUp"
           style={{ animationDelay: '300ms' }}
         >
           <h2 className="text-white font-semibold text-lg mb-4 flex items-center gap-2">

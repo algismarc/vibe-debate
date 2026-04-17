@@ -58,10 +58,10 @@ export default function Transcript({ transcript, visibleTurns, scrollToLatest }:
                     {visible && (
                       <div className={`flex ${isFor ? 'justify-start' : 'justify-end'}`}>
                         <div
-                          className={`max-w-[85%] paint-bubble ${
+                          className={`max-w-[85%] rounded-xl px-5 py-4 ${
                             isFor
-                              ? 'paint-bubble-light slide-from-left'
-                              : 'paint-bubble-dark slide-from-right'
+                              ? 'bg-purple-500 slide-from-left'
+                              : 'bg-gray-800 border border-gray-700 slide-from-right'
                           }`}
                         >
                           <p className={`text-xs font-bold uppercase tracking-widest mb-2 ${

@@ -8,62 +8,57 @@
   font-display: swap;
 }
 
-/* ─── Warm Academia — terracotta & orange-red palette ───────────────────────
+/* ─── Classical Navy — dark indigo + dusty rose + sage green palette ────────
    All colour overrides live here. No component files need changing — Tailwind
    utility classes pick up these tokens automatically.
    ─────────────────────────────────────────────────────────────────────────── */
 
 @theme {
-  /* Gray → warm neutral, slight terracotta undertone (replaces cold blue-gray) */
-  --color-gray-50:  #f8f0e8;
-  --color-gray-100: #eddcc8;
-  --color-gray-200: #d8b898;
-  --color-gray-300: #be9070;
-  --color-gray-400: #9a6c4c;
-  --color-gray-500: #7a5038;
-  --color-gray-600: #5a3822;
-  --color-gray-700: #3a2010;
-  --color-gray-800: #22120a;
-  --color-gray-900: #160a06;
+  /* Gray → dark navy-blue neutrals */
+  --color-gray-50:  #eef4f8;
+  --color-gray-100: #d4e4f0;
+  --color-gray-200: #b0c8e0;
+  --color-gray-300: #8aaac8;
+  --color-gray-400: #6888a8;
+  --color-gray-500: #4e6888;
+  --color-gray-600: #384e6c;
+  --color-gray-700: #243050;
+  --color-gray-800: #162038;
+  --color-gray-900: #0e1828;
 
-  /* Purple → terracotta-orange  (FOR side) */
-  --color-purple-200: #eea878;
-  --color-purple-300: #e08858;
-  --color-purple-400: #ce6838;   /* main FOR accent */
-  --color-purple-500: #b85020;
-  --color-purple-600: #9c3c10;
-  --color-purple-700: #7a2c08;
-  --color-purple-950: #1a0800;
+  /* Purple → dusty rose / blush  (FOR side) */
+  --color-purple-200: #f0c0c4;
+  --color-purple-300: #e4a0a6;
+  --color-purple-400: #d4808a;   /* main FOR accent */
+  --color-purple-500: #c06070;
+  --color-purple-600: #a44458;
+  --color-purple-700: #82303e;
+  --color-purple-950: #280c14;
 
-  /* Green → rust-red / deep terracotta  (AGAINST side) */
-  --color-green-300: #d07060;
-  --color-green-400: #b84c38;    /* main AGAINST accent */
-  --color-green-500: #9e3820;
-  --color-green-600: #802810;
-  --color-green-700: #601c08;
-  --color-green-950: #150400;
+  /* Green → sage / muted olive  (AGAINST side) */
+  --color-green-300: #a8bc88;
+  --color-green-400: #889e68;    /* main AGAINST accent */
+  --color-green-500: #6c8050;
+  --color-green-600: #52623c;
+  --color-green-700: #38442a;
+  --color-green-950: #0e1208;
 
-  /* Yellow → warm burnt gold  (tie) */
-  --color-yellow-400: #cc9428;
-  --color-yellow-500: #b07a18;
-  --color-yellow-600: #8c5e0a;
+  /* Yellow → soft gold  (tie) */
+  --color-yellow-400: #c8a84c;
+  --color-yellow-500: #aa8c34;
+  --color-yellow-600: #8a7020;
 
-  /* Red → muted brick-red  (errors) */
-  --color-red-400: #c05040;
-  --color-red-500: #a43830;
+  /* Red → muted rose-red  (errors) */
+  --color-red-400: #c05868;
+  --color-red-500: #a03e50;
 
-  /* ── Blob / organic border-radius ───────────────────────────────────────
-     8-value border-radius syntax: tl tr br bl / tl-vert tr-vert br-vert bl-vert
-     Each size has slightly different asymmetry so shapes feel hand-painted,
-     not algorithmically generated.
-     ─────────────────────────────────────────────────────────────────────── */
-  --radius-sm:   2px 14px  5px 11px / 12px  3px 15px  6px;
-  --radius-md:   4px 28px 11px  9px / 22px  6px  8px 17px;
-  --radius-lg:  18px  6px 30px 11px /  9px 26px 12px 34px;
-  --radius-xl:   8px 42px 14px 26px / 31px  9px 48px 12px;
-  --radius-2xl: 48px 12px 36px 18px / 14px 52px 20px 42px;
-  --radius-3xl: 14px 62px 22px 50px / 48px 16px 68px 24px;
-  --radius-full: 62% 38% 54% 46% / 41% 59% 43% 57%;
+  --radius-sm:   0.125rem;
+  --radius-md:   0.375rem;
+  --radius-lg:   0.5rem;
+  --radius-xl:   0.75rem;
+  --radius-2xl:  1rem;
+  --radius-3xl:  1.5rem;
+  --radius-full: 9999px;
 }
 
 :root {
@@ -72,8 +67,8 @@
 
 body {
   margin: 0;
-  background: #0e0806;
-  color: #eddcc8;
+  background: #0a1020;
+  color: #e4e0f4;
   font-family: 'GFS Heraklit', Georgia, 'Book Antiqua', serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -108,31 +103,31 @@ h1, h2, h3 {
   animation: fadeUp 0.5s ease-out forwards;
 }
 
-/* ─── Title shimmer — warm terracotta-to-gold, subtle ───────── */
+/* ─── Title shimmer ──────────────────────────────────────────── */
 @keyframes shimmer {
   0%   { background-position: -250% center; }
   100% { background-position:  250% center; }
 }
 .animate-shimmer {
-  color: #ce6838;
+  color: #d4808a;
 }
 
-/* ─── Glow pulses — muted, organic ──────────────────────────── */
-@keyframes glowTerra {
-  0%, 100% { box-shadow: 0 0 6px 1px rgba(206,104,56,0.15); }
-  50%       { box-shadow: 0 0 18px 4px rgba(206,104,56,0.35); }
+/* ─── Glow pulses ────────────────────────────────────────────── */
+@keyframes glowRose {
+  0%, 100% { box-shadow: 0 0 6px 1px rgba(212,128,138,0.15); }
+  50%       { box-shadow: 0 0 18px 4px rgba(212,128,138,0.35); }
 }
-.animate-glowPurple { animation: glowTerra 2.5s ease-in-out infinite; }
+.animate-glowPurple { animation: glowRose 2.5s ease-in-out infinite; }
 
-@keyframes glowRust {
-  0%, 100% { box-shadow: 0 0 6px 1px rgba(184,76,56,0.15); }
-  50%       { box-shadow: 0 0 18px 4px rgba(184,76,56,0.35); }
+@keyframes glowSage {
+  0%, 100% { box-shadow: 0 0 6px 1px rgba(136,158,104,0.15); }
+  50%       { box-shadow: 0 0 18px 4px rgba(136,158,104,0.35); }
 }
-.animate-glowGreen { animation: glowRust 2.5s ease-in-out infinite; }
+.animate-glowGreen { animation: glowSage 2.5s ease-in-out infinite; }
 
 @keyframes glowGold {
-  0%, 100% { box-shadow: 0 0 6px 1px rgba(204,148,40,0.15); }
-  50%       { box-shadow: 0 0 18px 4px rgba(204,148,40,0.35); }
+  0%, 100% { box-shadow: 0 0 6px 1px rgba(200,168,76,0.15); }
+  50%       { box-shadow: 0 0 18px 4px rgba(200,168,76,0.35); }
 }
 .animate-glowYellow { animation: glowGold 2.5s ease-in-out infinite; }
 
@@ -158,10 +153,10 @@ h1, h2, h3 {
 .slide-from-left  { animation: slideFromLeft  0.45s ease-out forwards; }
 .slide-from-right { animation: slideFromRight 0.45s ease-out forwards; }
 
-/* ─── Join code glow (terracotta, very gentle) ───────────────── */
+/* ─── Join code glow ─────────────────────────────────────────── */
 @keyframes codeGlow {
   0%, 100% { opacity: 0.85; }
-  50%       { opacity: 1; text-shadow: 0 0 14px rgba(206,104,56,0.5); }
+  50%       { opacity: 1; text-shadow: 0 0 14px rgba(212,128,138,0.5); }
 }
 .animate-codeGlow { animation: codeGlow 3s ease-in-out infinite; }
 
@@ -172,157 +167,12 @@ h1, h2, h3 {
 }
 .animate-vsSpark { animation: vsSpark 1.4s ease-in-out infinite; }
 
-/* ─── Brush-stroke buttons ──────────────────────────────────────
-   Primary/action buttons (any <button> with a rounded-* class) get
-   a turbulence-displaced rectangle as mask-image. The button's own
-   colour/gradient shows through the ragged brush shape. Three seed
-   variants cycle via :nth-of-type so no two adjacent buttons look
-   identical.
-   ─────────────────────────────────────────────────────────────── */
-button[class*="rounded-"],
-[role="button"][class*="rounded-"] {
-  -webkit-mask-image:
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 100' preserveAspectRatio='none'><defs><filter id='b' x='-6%25' y='-40%25' width='112%25' height='180%25'><feTurbulence type='fractalNoise' baseFrequency='0.012 0.09' numOctaves='2' seed='3'/><feDisplacementMap in='SourceGraphic' scale='26'/></filter></defs><rect x='14' y='12' width='372' height='76' fill='black' filter='url(%23b)'/></svg>");
-          mask-image:
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 100' preserveAspectRatio='none'><defs><filter id='b' x='-6%25' y='-40%25' width='112%25' height='180%25'><feTurbulence type='fractalNoise' baseFrequency='0.012 0.09' numOctaves='2' seed='3'/><feDisplacementMap in='SourceGraphic' scale='26'/></filter></defs><rect x='14' y='12' width='372' height='76' fill='black' filter='url(%23b)'/></svg>");
-  -webkit-mask-size: 100% 100%;
-          mask-size: 100% 100%;
-  -webkit-mask-repeat: no-repeat;
-          mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-          mask-position: center;
-  border: 0 !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-  padding-inline: 2rem !important;
-  padding-block: 1rem !important;
-}
-button[class*="rounded-"]:nth-of-type(3n+1),
-[role="button"][class*="rounded-"]:nth-of-type(3n+1) {
-  -webkit-mask-image:
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 100' preserveAspectRatio='none'><defs><filter id='b' x='-6%25' y='-40%25' width='112%25' height='180%25'><feTurbulence type='fractalNoise' baseFrequency='0.02 0.12' numOctaves='3' seed='11'/><feDisplacementMap in='SourceGraphic' scale='22'/></filter></defs><rect x='10' y='16' width='380' height='68' fill='black' filter='url(%23b)'/></svg>");
-          mask-image:
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 100' preserveAspectRatio='none'><defs><filter id='b' x='-6%25' y='-40%25' width='112%25' height='180%25'><feTurbulence type='fractalNoise' baseFrequency='0.02 0.12' numOctaves='3' seed='11'/><feDisplacementMap in='SourceGraphic' scale='22'/></filter></defs><rect x='10' y='16' width='380' height='68' fill='black' filter='url(%23b)'/></svg>");
-}
-button[class*="rounded-"]:nth-of-type(3n+2),
-[role="button"][class*="rounded-"]:nth-of-type(3n+2) {
-  -webkit-mask-image:
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 100' preserveAspectRatio='none'><defs><filter id='b' x='-6%25' y='-40%25' width='112%25' height='180%25'><feTurbulence type='fractalNoise' baseFrequency='0.009 0.07' numOctaves='2' seed='27'/><feDisplacementMap in='SourceGraphic' scale='30'/></filter></defs><rect x='18' y='9' width='364' height='82' fill='black' filter='url(%23b)'/></svg>");
-          mask-image:
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 100' preserveAspectRatio='none'><defs><filter id='b' x='-6%25' y='-40%25' width='112%25' height='180%25'><feTurbulence type='fractalNoise' baseFrequency='0.009 0.07' numOctaves='2' seed='27'/><feDisplacementMap in='SourceGraphic' scale='30'/></filter></defs><rect x='18' y='9' width='364' height='82' fill='black' filter='url(%23b)'/></svg>");
-}
-
-/* ─── Brush-stroke inputs & selects ─────────────────────────────
-   Same masking trick, but different turbulence profile: higher
-   base-frequency with lower displacement, so edges look more like
-   a steady drag of a wider brush (vs. the quick flick of the
-   buttons). Rect sits nearly full-height so text has clearance.
-   ─────────────────────────────────────────────────────────────── */
-input[class*="rounded-"],
-select[class*="rounded-"],
-textarea[class*="rounded-"] {
-  -webkit-mask-image:
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 100' preserveAspectRatio='none'><defs><filter id='b' x='-4%25' y='-30%25' width='108%25' height='160%25'><feTurbulence type='fractalNoise' baseFrequency='0.04 0.05' numOctaves='2' seed='50'/><feDisplacementMap in='SourceGraphic' scale='14'/></filter></defs><rect x='8' y='8' width='384' height='84' fill='black' filter='url(%23b)'/></svg>");
-          mask-image:
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 100' preserveAspectRatio='none'><defs><filter id='b' x='-4%25' y='-30%25' width='108%25' height='160%25'><feTurbulence type='fractalNoise' baseFrequency='0.04 0.05' numOctaves='2' seed='50'/><feDisplacementMap in='SourceGraphic' scale='14'/></filter></defs><rect x='8' y='8' width='384' height='84' fill='black' filter='url(%23b)'/></svg>");
-  -webkit-mask-size: 100% 100%;
-          mask-size: 100% 100%;
-  -webkit-mask-repeat: no-repeat;
-          mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-          mask-position: center;
-  border: 0 !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-  padding-inline: 1.5rem !important;
-}
-input[class*="rounded-"]:nth-of-type(3n+1),
-select[class*="rounded-"]:nth-of-type(3n+1),
-textarea[class*="rounded-"]:nth-of-type(3n+1) {
-  -webkit-mask-image:
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 100' preserveAspectRatio='none'><defs><filter id='b' x='-4%25' y='-30%25' width='108%25' height='160%25'><feTurbulence type='fractalNoise' baseFrequency='0.06 0.04' numOctaves='3' seed='72'/><feDisplacementMap in='SourceGraphic' scale='11'/></filter></defs><rect x='10' y='6' width='380' height='88' fill='black' filter='url(%23b)'/></svg>");
-          mask-image:
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 100' preserveAspectRatio='none'><defs><filter id='b' x='-4%25' y='-30%25' width='108%25' height='160%25'><feTurbulence type='fractalNoise' baseFrequency='0.06 0.04' numOctaves='3' seed='72'/><feDisplacementMap in='SourceGraphic' scale='11'/></filter></defs><rect x='10' y='6' width='380' height='88' fill='black' filter='url(%23b)'/></svg>");
-}
-input[class*="rounded-"]:nth-of-type(3n+2),
-select[class*="rounded-"]:nth-of-type(3n+2),
-textarea[class*="rounded-"]:nth-of-type(3n+2) {
-  -webkit-mask-image:
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 100' preserveAspectRatio='none'><defs><filter id='b' x='-4%25' y='-30%25' width='108%25' height='160%25'><feTurbulence type='fractalNoise' baseFrequency='0.03 0.06' numOctaves='2' seed='99'/><feDisplacementMap in='SourceGraphic' scale='17'/></filter></defs><rect x='6' y='10' width='388' height='80' fill='black' filter='url(%23b)'/></svg>");
-          mask-image:
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 100' preserveAspectRatio='none'><defs><filter id='b' x='-4%25' y='-30%25' width='108%25' height='160%25'><feTurbulence type='fractalNoise' baseFrequency='0.03 0.06' numOctaves='2' seed='99'/><feDisplacementMap in='SourceGraphic' scale='17'/></filter></defs><rect x='6' y='10' width='388' height='80' fill='black' filter='url(%23b)'/></svg>");
-}
-
 /* Micro-interaction on press */
 button:active, [role="button"]:active {
-  transform: rotate(-1.2deg) scale(0.96) translateY(1px);
+  transform: scale(0.96);
   transition: transform 0.08s ease;
 }
 
-/* ─── Organic tilt variance ────────────────────────────────────
-   Anything with a blob radius picks up a tiny, deterministic
-   rotation based on its position in its parent. No two adjacent
-   shapes tilt the same way, so grids of cards read as hand-laid
-   rather than graph-paper aligned.
-   ─────────────────────────────────────────────────────────────── */
-[class*="rounded-"]:nth-child(3n)   { transform: rotate(-0.6deg); }
-[class*="rounded-"]:nth-child(3n+1) { transform: rotate( 0.8deg); }
-[class*="rounded-"]:nth-child(3n+2) { transform: rotate(-0.3deg); }
-[class*="rounded-"]:nth-child(5n+4) { transform: rotate( 1.1deg); }
-/* Don't tilt things that need crisp alignment or their own transforms */
-[class*="rounded-full"]:where(.avatar, .icon, [class*="w-"][class*="h-"]),
-[class*="animate-"],
-.no-tilt, .no-tilt * { transform: none !important; }
-
-/* ─── Slow idle wobble — some shapes breathe like clay ─────── */
-@keyframes wobble {
-  0%, 100% { border-radius: var(--radius-2xl); }
-  33%      { border-radius: 36px 18px 48px 12px / 52px 14px 42px 20px; }
-  66%      { border-radius: 12px 48px 18px 36px / 20px 42px 14px 52px; }
-}
-.blob-wobble { animation: wobble 14s ease-in-out infinite; }
-
-/* ─── Rothko-style painted panel ────────────────────────────
-   Terracotta field with a soft-edged dark block inside, painted
-   via feTurbulence displacement + gaussian blur on an SVG rect.
-   Use as a wrapper class on section/card containers.
-   ─────────────────────────────────────────────────────────── */
-.rothko-panel {
-  background-image:
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400' preserveAspectRatio='none'><defs><filter id='r' x='-10%25' y='-10%25' width='120%25' height='120%25'><feTurbulence type='fractalNoise' baseFrequency='0.018 0.02' numOctaves='2' seed='7'/><feDisplacementMap in='SourceGraphic' scale='34'/><feGaussianBlur stdDeviation='5'/></filter><filter id='f'><feTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='2'/><feColorMatrix values='0 0 0 0 0.55  0 0 0 0 0.24  0 0 0 0 0.1  0 0 0 0.4 0'/></filter></defs><rect width='400' height='400' fill='%238a3818'/><rect width='400' height='400' filter='url(%23f)' opacity='0.55'/><rect x='28' y='30' width='344' height='340' fill='%23120608' filter='url(%23r)'/></svg>") !important;
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  background-color: transparent !important;
-  border: 0 !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-  padding: 2.75rem 2rem !important;
-}
-
-/* ─── Painterly chat bubbles ────────────────────────────────
-   Single-colour painted block with soft-ragged edges (no inner
-   box). Two variants distinguish sides by lightness only.
-   ─────────────────────────────────────────────────────────── */
-.paint-bubble {
-  -webkit-mask-image:
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200' preserveAspectRatio='none'><defs><filter id='b' x='-8%25' y='-15%25' width='116%25' height='130%25'><feTurbulence type='fractalNoise' baseFrequency='0.02 0.08' numOctaves='2' seed='13'/><feDisplacementMap in='SourceGraphic' scale='22'/><feGaussianBlur stdDeviation='3'/></filter></defs><rect x='14' y='14' width='372' height='172' fill='black' filter='url(%23b)'/></svg>");
-          mask-image:
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200' preserveAspectRatio='none'><defs><filter id='b' x='-8%25' y='-15%25' width='116%25' height='130%25'><feTurbulence type='fractalNoise' baseFrequency='0.02 0.08' numOctaves='2' seed='13'/><feDisplacementMap in='SourceGraphic' scale='22'/><feGaussianBlur stdDeviation='3'/></filter></defs><rect x='14' y='14' width='372' height='172' fill='black' filter='url(%23b)'/></svg>");
-  -webkit-mask-size: 100% 100%;
-          mask-size: 100% 100%;
-  -webkit-mask-repeat: no-repeat;
-          mask-repeat: no-repeat;
-  border: 0 !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-  padding: 1.75rem 1.5rem !important;
-}
-.paint-bubble-light {
-  background-color: #c45830 !important;
-}
-.paint-bubble-dark {
-  background-color: #160608 !important;
-}
 
 /* ─── Card grain overlay (stronger paper/plaster texture) ──── */
 .card-grain::after {
@@ -337,15 +187,6 @@ button:active, [role="button"]:active {
   mix-blend-mode: overlay;
 }
 
-/* ─── Rough painted-edge shadow — double-offset, not centered ─ */
-[class*="rounded-xl"],
-[class*="rounded-2xl"],
-[class*="rounded-3xl"] {
-  box-shadow:
-    -3px 4px 0 0 rgba(22, 10, 6, 0.35),
-    6px 10px 22px -8px rgba(22, 10, 6, 0.55),
-    inset 0 0 0 1px rgba(237, 220, 200, 0.04);
-}
 
 /* ─── Scorecard row reveal (kept for any future use) ─────────── */
 @keyframes rowReveal {

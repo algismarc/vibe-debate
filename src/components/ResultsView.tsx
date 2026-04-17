@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import type { Session, Scores } from '../lib/types'
+import type { Session } from '../lib/types'
 import Transcript from './Transcript'
 
 interface Props {
@@ -15,31 +15,23 @@ export default function ResultsView({ session }: Props) {
 
   if (!judgment) return null
 
-  const { scores, winner, summary } = judgment
-  const winnerName = winner === 'for' ? player_a.name : winner === 'against' ? player_b?.name : null
-  const winnerSide = winner === 'for' ? 'FOR' : winner === 'against' ? 'AGAINST' : null
-  const winnerColor = winner === 'for' ? 'text-purple-400' : winner === 'against' ? 'text-green-400' : 'text-yellow-400'
-  const winnerBorder = winner === 'for' ? 'border-purple-500/50' : winner === 'against' ? 'border-green-500/50' : 'border-yellow-500/50'
+  const { for_highlights, against_highlights, consensus } = judgment
+  const forName = player_a.name
+  const againstName = player_b?.name ?? 'Opponent'
 
   function handleShare() {
-    const forName = player_a.name
-    const againstName = player_b?.name ?? 'Opponent'
-    const winnerLabel = winner === 'tie'
-      ? "It's a tie!"
-      : `${winner === 'for' ? forName : againstName} wins (${winner.toUpperCase()})`
-
     const text = [
       `⚡ Vibe Debate: "${title}"`,
       ``,
       `${forName} (FOR) vs ${againstName} (AGAINST)`,
       ``,
-      `🏆 ${winnerLabel}`,
+      `🟣 Best from ${forName}:`,
+      ...for_highlights.map(p => `  • ${p}`),
       ``,
-      `Scores:`,
-      `  ${forName}: ${scores.for.total}/40`,
-      `  ${againstName}: ${scores.against.total}/40`,
+      `🟢 Best from ${againstName}:`,
+      ...against_highlights.map(p => `  • ${p}`),
       ``,
-      summary,
+      `🤝 Consensus: ${consensus}`,
     ].join('\n')
 
     navigator.clipboard.writeText(text)
@@ -53,25 +45,6 @@ export default function ResultsView({ session }: Props) {
       <div className="text-center w-full">
         <p className="text-gray-500 text-xs uppercase tracking-widest mb-1">Debate Topic</p>
         <h1 className="text-2xl font-bold text-white leading-snug">"{title}"</h1>
-      </div>
-
-      {/* Winner declaration */}
-      <div className={`w-full bg-gray-900 border-2 ${winnerBorder} rounded-2xl p-6 text-center`}>
-        {winner === 'tie' ? (
-          <>
-            <p className="text-4xl mb-2">🤝</p>
-            <p className="text-yellow-400 text-xs font-bold uppercase tracking-widest mb-1">Result</p>
-            <h2 className="text-3xl font-bold text-white">It's a Tie</h2>
-          </>
-        ) : (
-          <>
-            <p className="text-4xl mb-2">🏆</p>
-            <p className={`text-xs font-bold uppercase tracking-widest mb-1 ${winnerColor}`}>
-              Winner — {winnerSide}
-            </p>
-            <h2 className={`text-3xl font-bold ${winnerColor}`}>{winnerName}</h2>
-          </>
-        )}
       </div>
 
       {/* Tabs */}
@@ -93,21 +66,44 @@ export default function ResultsView({ session }: Props) {
 
       {tab === 'results' ? (
         <>
-          {/* Scorecard */}
-          <div className="w-full flex flex-col gap-3">
-            <Scorecard
-              forName={player_a.name}
-              againstName={player_b?.name ?? 'Opponent'}
-              forScores={scores.for}
-              againstScores={scores.against}
-              winner={winner}
-            />
+          {/* Best arguments */}
+          <div className="w-full grid grid-cols-2 gap-3">
+            <div className="bg-gray-900 border border-purple-500/30 rounded-2xl p-4 flex flex-col gap-2">
+              <p className="text-purple-400 text-xs font-bold uppercase tracking-widest mb-1">
+                {forName} · FOR
+              </p>
+              <ul className="flex flex-col gap-2">
+                {for_highlights.map((point, i) => (
+                  <li key={i} className="flex gap-2 text-sm text-gray-300 leading-snug">
+                    <span className="text-purple-500 mt-0.5 shrink-0">•</span>
+                    <span>{point}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="bg-gray-900 border border-green-500/30 rounded-2xl p-4 flex flex-col gap-2">
+              <p className="text-green-400 text-xs font-bold uppercase tracking-widest mb-1">
+                {againstName} · AGAINST
+              </p>
+              <ul className="flex flex-col gap-2">
+                {against_highlights.map((point, i) => (
+                  <li key={i} className="flex gap-2 text-sm text-gray-300 leading-snug">
+                    <span className="text-green-500 mt-0.5 shrink-0">•</span>
+                    <span>{point}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
-          {/* Judge summary */}
-          <div className="w-full bg-gray-900 border border-gray-800 rounded-2xl p-5">
-            <p className="text-gray-500 text-xs uppercase tracking-widest mb-3">Judge's Ruling</p>
-            <p className="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap">{summary}</p>
+          {/* Consensus */}
+          <div className="w-full bg-gray-900 border border-gray-700 rounded-2xl p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-xl">🤝</span>
+              <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">Consensus</p>
+            </div>
+            <p className="text-gray-200 text-sm leading-relaxed">{consensus}</p>
           </div>
         </>
       ) : (
@@ -130,73 +126,5 @@ export default function ResultsView({ session }: Props) {
         </button>
       </div>
     </main>
-  )
-}
-
-const CRITERIA = [
-  { key: 'argument', label: 'Argument' },
-  { key: 'persuasiveness', label: 'Persuasion' },
-  { key: 'evidence', label: 'Evidence' },
-  { key: 'rhetoric', label: 'Rhetoric' },
-] as const
-
-function Scorecard({
-  forName,
-  againstName,
-  forScores,
-  againstScores,
-  winner,
-}: {
-  forName: string
-  againstName: string
-  forScores: Scores
-  againstScores: Scores
-  winner: 'for' | 'against' | 'tie'
-}) {
-  return (
-    <div className="w-full bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
-      {/* Header */}
-      <div className="grid grid-cols-3 text-xs font-bold uppercase tracking-widest border-b border-gray-800">
-        <div className={`px-4 py-3 text-purple-400 ${winner === 'for' ? 'bg-purple-950/40' : ''}`}>
-          {forName}
-          <span className="ml-1.5 opacity-60">FOR</span>
-        </div>
-        <div className="px-4 py-3 text-gray-600 text-center">Criteria</div>
-        <div className={`px-4 py-3 text-green-400 text-right ${winner === 'against' ? 'bg-green-950/40' : ''}`}>
-          <span className="mr-1.5 opacity-60">AGAINST</span>
-          {againstName}
-        </div>
-      </div>
-
-      {/* Rows */}
-      {CRITERIA.map(({ key, label }) => {
-        const f = forScores[key]
-        const a = againstScores[key]
-        const forWins = f > a
-        const againstWins = a > f
-        return (
-          <div key={key} className="grid grid-cols-3 border-b border-gray-800/60 last:border-0">
-            <div className={`px-4 py-3 text-sm font-bold ${forWins ? 'text-purple-300' : 'text-gray-400'}`}>
-              {f}<span className="text-gray-600 font-normal">/10</span>
-            </div>
-            <div className="px-4 py-3 text-gray-600 text-xs text-center self-center">{label}</div>
-            <div className={`px-4 py-3 text-sm font-bold text-right ${againstWins ? 'text-green-300' : 'text-gray-400'}`}>
-              {a}<span className="text-gray-600 font-normal">/10</span>
-            </div>
-          </div>
-        )
-      })}
-
-      {/* Totals */}
-      <div className="grid grid-cols-3 border-t-2 border-gray-700 bg-gray-800/40">
-        <div className={`px-4 py-3 text-lg font-bold ${winner === 'for' ? 'text-purple-300' : 'text-gray-300'}`}>
-          {forScores.total}<span className="text-gray-600 text-sm font-normal">/40</span>
-        </div>
-        <div className="px-4 py-3 text-gray-600 text-xs text-center self-center uppercase tracking-widest">Total</div>
-        <div className={`px-4 py-3 text-lg font-bold text-right ${winner === 'against' ? 'text-green-300' : 'text-gray-300'}`}>
-          {againstScores.total}<span className="text-gray-600 text-sm font-normal">/40</span>
-        </div>
-      </div>
-    </div>
   )
 }

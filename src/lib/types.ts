@@ -11,21 +11,10 @@ export interface Config {
   char_limit: number | null
 }
 
-export interface Scores {
-  argument: number
-  persuasiveness: number
-  evidence: number
-  rhetoric: number
-  total: number
-}
-
 export interface Judgment {
-  scores: {
-    for: Scores
-    against: Scores
-  }
-  winner: 'for' | 'against' | 'tie'
-  summary: string
+  for_highlights: string[]
+  against_highlights: string[]
+  consensus: string
 }
 
 export type SessionStatus =

@@ -35,12 +35,9 @@ interface Session {
 }
 
 interface Judgment {
-  scores: {
-    for: { argument: number; persuasiveness: number; evidence: number; rhetoric: number; total: number }
-    against: { argument: number; persuasiveness: number; evidence: number; rhetoric: number; total: number }
-  }
-  winner: 'for' | 'against' | 'tie'
-  summary: string
+  for_highlights: string[]
+  against_highlights: string[]
+  consensus: string
 }
 
 // ─── Prompts ─────────────────────────────────────────────────────────────────
@@ -49,7 +46,7 @@ const DEBATE_SYSTEM = `You are a debate scriptwriter. You will receive a debate 
 
 Rules:
 - Each debater follows their strategist's brief as closely as possible.
-- Each turn MUST be short: 4–6 bullet points only. No prose paragraphs.
+- Each turn MUST be very short: exactly 3–4 bullet points. No more. No prose paragraphs.
 - Every bullet point should include a specific statistic, figure, study, or concrete data point where possible. Make the numbers real and plausible.
 - Rebuttals must directly counter specific numbers or claims the other side made — don't just pivot, challenge the data.
 - Keep language sharp and direct. No filler. No waffle.
@@ -60,42 +57,33 @@ Format your response EXACTLY like this, including the headers:
 
 ## Round 1: Opening Statements
 
-**FOR:** [4–6 bullet points with stats]
+**FOR:** [3–4 bullet points with stats]
 
-**AGAINST:** [4–6 bullet points with stats]
+**AGAINST:** [3–4 bullet points with stats]
 
 ## Round 2: Rebuttals
 
-**FOR:** [4–6 bullet points directly countering AGAINST's data]
+**FOR:** [3–4 bullet points directly countering AGAINST's data]
 
-**AGAINST:** [4–6 bullet points directly countering FOR's data]
+**AGAINST:** [3–4 bullet points directly countering FOR's data]
 
 ## Round 3: Closing Arguments
 
-**FOR:** [4–6 bullet points, strongest data first]
+**FOR:** [3–4 bullet points, strongest data first]
 
-**AGAINST:** [4–6 bullet points, strongest data first]`
+**AGAINST:** [3–4 bullet points, strongest data first]`
 
-const JUDGE_SYSTEM = `You are a rigorous, neutral debate judge. Your primary focus is on data quality — which side used stronger statistics, more credible evidence, and better-grounded claims.
+const JUDGE_SYSTEM = `You are a thoughtful debate moderator. Your job is NOT to pick a winner — it is to find common ground and highlight the strongest contributions from each side.
 
-Score each debater on these four criteria (1–10 scale). Be discriminating: a 7 means genuinely good, a 9 means exceptional. Do not cluster scores around the middle.
+Read the full debate and identify:
+1. The 2–3 strongest, most compelling points made by the FOR side
+2. The 2–3 strongest, most compelling points made by the AGAINST side
+3. A consensus: what do both sides actually agree on beneath the argument? What insight emerges when you combine their best points? Write 2–3 sentences that a reasonable person on either side could accept.
 
-1. Argument Strength — Were the core claims logically sound? Did the data points actually support the conclusion being made? Penalise logical leaps, cherry-picked stats, and unsupported assertions.
-
-2. Persuasiveness — Would a sceptical, data-literate observer actually be moved? Numbers alone aren't enough — did they deploy them effectively?
-
-3. Evidence & Data Quality — This is the most important criterion. Were the statistics specific and credible? Did they cite real studies, real figures, real-world examples? Vague generalities score 1–3. Specific, well-sourced data scores 7–10.
-
-4. Rhetorical Skill — Did they control the framing? Did they directly counter the other side's numbers, or just talk past them?
-
-The total is the sum of all four scores (max 40). Weight your assessment toward Evidence & Data Quality — a side that dominated on data should win even if their rhetoric was weaker.
-
-For your summary: write 2 sentences maximum. Identify which side had stronger data and why they won. Be blunt.
-
-Declare a winner. Only call a tie if the totals are equal AND data quality was genuinely indistinguishable.
+Keep each highlight to one punchy sentence. The consensus should feel like a genuine synthesis, not a cop-out.
 
 Respond with ONLY valid JSON, no markdown fences, no preamble:
-{"scores":{"for":{"argument":N,"persuasiveness":N,"evidence":N,"rhetoric":N,"total":N},"against":{"argument":N,"persuasiveness":N,"evidence":N,"rhetoric":N,"total":N}},"winner":"for"|"against"|"tie","summary":"Your 2-sentence verdict here."}`
+{"for_highlights":["point 1","point 2","point 3"],"against_highlights":["point 1","point 2","point 3"],"consensus":"2–3 sentence synthesis here."}`
 
 // ─── Handler ─────────────────────────────────────────────────────────────────
 
@@ -279,7 +267,8 @@ export default async (req: Request) => {
     .update({ judgment, status: 'complete' })
     .eq('id', session_id)
 
-  console.log(`debate-background: session ${session_id} complete. Topic: "${title}" | Winner: ${judgment.winner}`)
+  console.log(`debate-background: session ${session_id} complete. Topic: "${title}"`)
+
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -331,19 +320,11 @@ export function isValidJudgment(obj: unknown): obj is Judgment {
   if (typeof obj !== 'object' || obj === null) return false
   const j = obj as Record<string, unknown>
 
-  if (!['for', 'against', 'tie'].includes(j.winner as string)) return false
-  if (typeof j.summary !== 'string' || j.summary.length < 10) return false
-
-  const scores = j.scores as Record<string, unknown>
-  if (!scores?.for || !scores?.against) return false
-
-  for (const side of ['for', 'against'] as const) {
-    const s = scores[side] as Record<string, unknown>
-    if (!s) return false
-    for (const key of ['argument', 'persuasiveness', 'evidence', 'rhetoric', 'total']) {
-      if (typeof s[key] !== 'number') return false
-    }
-  }
+  if (typeof j.consensus !== 'string' || j.consensus.length < 10) return false
+  if (!Array.isArray(j.for_highlights) || j.for_highlights.length === 0) return false
+  if (!Array.isArray(j.against_highlights) || j.against_highlights.length === 0) return false
+  if (!j.for_highlights.every((h: unknown) => typeof h === 'string')) return false
+  if (!j.against_highlights.every((h: unknown) => typeof h === 'string')) return false
 
   return true
 }

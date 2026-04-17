@@ -35,12 +35,9 @@ import handler, {
 // ─── Shared fixtures ──────────────────────────────────────────────────────────
 
 const validJudgmentObj = {
-  scores: {
-    for: { argument: 8, persuasiveness: 7, evidence: 8, rhetoric: 7, total: 30 },
-    against: { argument: 7, persuasiveness: 8, evidence: 6, rhetoric: 8, total: 29 },
-  },
-  winner: 'for' as const,
-  summary: 'This is a sufficiently detailed summary of the debate ruling.',
+  for_highlights: ['Made a strong statistical case', 'Directly countered the opposition data'],
+  against_highlights: ['Raised compelling counter-evidence', 'Exposed a flaw in the FOR framing'],
+  consensus: 'Both sides agreed that the issue has real complexity. A balanced approach incorporating the strongest data from each side would serve the debate topic best.',
 }
 
 const validJudgmentJSON = JSON.stringify(validJudgmentObj)
@@ -140,29 +137,25 @@ describe('isValidJudgment', () => {
     expect(isValidJudgment(validJudgmentObj)).toBe(true)
   })
 
-  it('returns false when winner is not for/against/tie', () => {
-    expect(isValidJudgment({ ...validJudgmentObj, winner: 'draw' })).toBe(false)
+  it('returns false when consensus is missing', () => {
+    const { consensus: _c, ...rest } = validJudgmentObj
+    expect(isValidJudgment(rest)).toBe(false)
   })
 
-  it('returns false when scores are missing', () => {
-    expect(
-      isValidJudgment({ winner: 'for', summary: 'A detailed ruling here.', scores: null }),
-    ).toBe(false)
+  it('returns false when consensus is too short (< 10 chars)', () => {
+    expect(isValidJudgment({ ...validJudgmentObj, consensus: 'short' })).toBe(false)
   })
 
-  it('returns false when a score field is not a number', () => {
-    const bad = {
-      ...validJudgmentObj,
-      scores: {
-        ...validJudgmentObj.scores,
-        for: { ...validJudgmentObj.scores.for, argument: 'eight' },
-      },
-    }
-    expect(isValidJudgment(bad)).toBe(false)
+  it('returns false when for_highlights is empty', () => {
+    expect(isValidJudgment({ ...validJudgmentObj, for_highlights: [] })).toBe(false)
   })
 
-  it('returns false when summary is too short (< 10 chars)', () => {
-    expect(isValidJudgment({ ...validJudgmentObj, summary: 'short' })).toBe(false)
+  it('returns false when against_highlights contains a non-string', () => {
+    expect(isValidJudgment({ ...validJudgmentObj, against_highlights: [42] })).toBe(false)
+  })
+
+  it('returns false when highlights are missing entirely', () => {
+    expect(isValidJudgment({ consensus: validJudgmentObj.consensus })).toBe(false)
   })
 })
 

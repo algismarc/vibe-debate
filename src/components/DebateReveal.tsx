@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import type { Session, Scores } from '../lib/types'
+import type { Session, Judgment } from '../lib/types'
 import { parseTranscript, countTurns } from '../lib/parseTranscript'
 import Transcript from './Transcript'
 
@@ -129,28 +129,15 @@ export default function DebateReveal({ session }: Props) {
         >
           <div className="flex items-center gap-3 my-2">
             <div className="flex-1 h-px bg-gray-800" />
-            <span className="text-gray-600 text-xs uppercase tracking-widest">Judge's Verdict</span>
+            <span className="text-gray-600 text-xs uppercase tracking-widest">Verdict</span>
             <div className="flex-1 h-px bg-gray-800" />
           </div>
 
-          <WinnerCard
-            winner={judgment.winner}
+          <ConsensusPanel
+            judgment={judgment}
             forName={player_a.name}
             againstName={player_b?.name ?? 'Opponent'}
           />
-
-          <Scorecard
-            forName={player_a.name}
-            againstName={player_b?.name ?? 'Opponent'}
-            forScores={judgment.scores.for}
-            againstScores={judgment.scores.against}
-            winner={judgment.winner}
-          />
-
-          <div className="w-full bg-gray-900 border border-gray-800 rounded-2xl p-5 animate-fadeIn" style={{ animationDelay: '0.6s', opacity: 0 }}>
-            <p className="text-gray-500 text-xs uppercase tracking-widest mb-3">Ruling</p>
-            <p className="text-gray-300 text-sm leading-relaxed">{judgment.summary}</p>
-          </div>
 
           <Actions session={session} />
         </div>
@@ -161,132 +148,63 @@ export default function DebateReveal({ session }: Props) {
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
-function WinnerCard({
-  winner,
+function ConsensusPanel({
+  judgment,
   forName,
   againstName,
 }: {
-  winner: 'for' | 'against' | 'tie'
+  judgment: Judgment
   forName: string
   againstName: string
 }) {
-  const isTie = winner === 'tie'
-  const winnerName = winner === 'for' ? forName : winner === 'against' ? againstName : null
-  const winnerSide = winner === 'for' ? 'FOR' : winner === 'against' ? 'AGAINST' : null
-  const color = isTie ? 'text-yellow-400' : winner === 'for' ? 'text-purple-400' : 'text-green-400'
-  const border = isTie ? 'border-yellow-500/40' : winner === 'for' ? 'border-purple-500/40' : 'border-green-500/40'
-  const glow = isTie ? 'animate-glowYellow' : winner === 'for' ? 'animate-glowPurple' : 'animate-glowGreen'
-
   return (
-    <div className={`w-full bg-gray-900 border-2 ${border} ${glow} rounded-2xl p-6 text-center animate-bounceIn`}>
-      <p className="text-4xl mb-2 animate-trophyBounce">{isTie ? '🤝' : '🏆'}</p>
-      <p className={`text-xs font-bold uppercase tracking-widest mb-1 ${color}`}>
-        {isTie ? 'Result' : `Winner — ${winnerSide}`}
-      </p>
-      <h2 className={`text-3xl font-bold ${color}`}>
-        {isTie ? "It's a Tie" : winnerName}
-      </h2>
-    </div>
-  )
-}
-
-const CRITERIA = [
-  { key: 'argument' as const, label: 'Argument' },
-  { key: 'persuasiveness' as const, label: 'Persuasion' },
-  { key: 'evidence' as const, label: 'Evidence' },
-  { key: 'rhetoric' as const, label: 'Rhetoric' },
-]
-
-// Smooth count-up hook using rAF + easeOutQuart
-function useCountUp(target: number, duration = 900, delay = 0) {
-  const [value, setValue] = useState(0)
-  useEffect(() => {
-    setValue(0)
-    if (target === 0) return
-    const timeout = setTimeout(() => {
-      const start = performance.now()
-      const frame = (now: number) => {
-        const progress = Math.min((now - start) / duration, 1)
-        const eased = 1 - Math.pow(1 - progress, 4) // easeOutQuart
-        setValue(Math.round(eased * target))
-        if (progress < 1) requestAnimationFrame(frame)
-      }
-      requestAnimationFrame(frame)
-    }, delay)
-    return () => clearTimeout(timeout)
-  }, [target, duration, delay])
-  return value
-}
-
-function Scorecard({
-  forName,
-  againstName,
-  forScores,
-  againstScores,
-  winner,
-}: {
-  forName: string
-  againstName: string
-  forScores: Scores
-  againstScores: Scores
-  winner: 'for' | 'against' | 'tie'
-}) {
-  // Count-up totals
-  const forTotal = useCountUp(forScores.total, 1000, 300)
-  const againstTotal = useCountUp(againstScores.total, 1000, 300)
-
-  return (
-    <div className="w-full bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden animate-fadeIn" style={{ animationDelay: '0.2s', opacity: 0 }}>
-      <div className="grid grid-cols-3 text-xs font-bold uppercase tracking-widest border-b border-gray-800">
-        <div className={`px-3 py-3 text-purple-400 min-w-0 ${winner === 'for' ? 'bg-purple-950/40' : ''}`}>
-          <span className="block truncate">{forName}</span>
-          <span className="opacity-50">FOR</span>
+    <div className="w-full flex flex-col gap-4 animate-fadeIn">
+      {/* Best arguments — side by side */}
+      <div className="grid grid-cols-2 gap-3">
+        {/* FOR highlights */}
+        <div className="bg-gray-900 border border-purple-500/30 rounded-2xl p-4 flex flex-col gap-2">
+          <p className="text-purple-400 text-xs font-bold uppercase tracking-widest mb-1">
+            {forName} · FOR
+          </p>
+          <ul className="flex flex-col gap-2">
+            {judgment.for_highlights.map((point, i) => (
+              <li key={i} className="flex gap-2 text-sm text-gray-300 leading-snug">
+                <span className="text-purple-500 mt-0.5 shrink-0">•</span>
+                <span>{point}</span>
+              </li>
+            ))}
+          </ul>
         </div>
-        <div className="px-2 py-3 text-gray-600 text-center animate-vsSpark">vs</div>
-        <div className={`px-3 py-3 text-green-400 text-right min-w-0 ${winner === 'against' ? 'bg-green-950/40' : ''}`}>
-          <span className="block truncate">{againstName}</span>
-          <span className="opacity-50">AGAINST</span>
+
+        {/* AGAINST highlights */}
+        <div className="bg-gray-900 border border-green-500/30 rounded-2xl p-4 flex flex-col gap-2">
+          <p className="text-green-400 text-xs font-bold uppercase tracking-widest mb-1">
+            {againstName} · AGAINST
+          </p>
+          <ul className="flex flex-col gap-2">
+            {judgment.against_highlights.map((point, i) => (
+              <li key={i} className="flex gap-2 text-sm text-gray-300 leading-snug">
+                <span className="text-green-500 mt-0.5 shrink-0">•</span>
+                <span>{point}</span>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
 
-      {CRITERIA.map(({ key, label }, i) => {
-        const f = forScores[key]
-        const a = againstScores[key]
-        return (
-          <div
-            key={key}
-            className="grid grid-cols-3 border-b border-gray-800/60 last:border-0 animate-rowReveal"
-            style={{ animationDelay: `${i * 100 + 350}ms` }}
-          >
-            <div className={`px-4 py-3 text-sm font-bold ${f > a ? 'text-purple-300' : 'text-gray-400'}`}>
-              <CountUpCell target={f} delay={i * 100 + 350} />
-              <span className="text-gray-600 font-normal">/10</span>
-            </div>
-            <div className="px-4 py-3 text-gray-600 text-xs text-center self-center">{label}</div>
-            <div className={`px-4 py-3 text-sm font-bold text-right ${a > f ? 'text-green-300' : 'text-gray-400'}`}>
-              <CountUpCell target={a} delay={i * 100 + 350} />
-              <span className="text-gray-600 font-normal">/10</span>
-            </div>
-          </div>
-        )
-      })}
-
-      <div className="grid grid-cols-3 border-t-2 border-gray-700 bg-gray-800/40">
-        <div className={`px-4 py-3 text-lg font-bold ${winner === 'for' ? 'text-purple-300' : 'text-gray-300'}`}>
-          {forTotal}<span className="text-gray-600 text-sm font-normal">/40</span>
+      {/* Consensus */}
+      <div
+        className="w-full bg-gray-900 border border-gray-700 rounded-2xl p-5 animate-fadeIn"
+        style={{ animationDelay: '0.3s', opacity: 0 }}
+      >
+        <div className="flex items-center gap-2 mb-3">
+          <span className="text-xl">🤝</span>
+          <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">Consensus</p>
         </div>
-        <div className="px-4 py-3 text-gray-600 text-xs text-center self-center uppercase tracking-widest">Total</div>
-        <div className={`px-4 py-3 text-lg font-bold text-right ${winner === 'against' ? 'text-green-300' : 'text-gray-300'}`}>
-          {againstTotal}<span className="text-gray-600 text-sm font-normal">/40</span>
-        </div>
+        <p className="text-gray-200 text-sm leading-relaxed">{judgment.consensus}</p>
       </div>
     </div>
   )
-}
-
-function CountUpCell({ target, delay }: { target: number; delay: number }) {
-  const value = useCountUp(target, 700, delay)
-  return <>{value}</>
 }
 
 // ─── Debating loader ─────────────────────────────────────────────────────────
@@ -396,23 +314,22 @@ function Actions({ session }: { session: Session }) {
 
   function handleShare() {
     if (!judgment) return
-    const { scores, winner, summary } = judgment
+    const { for_highlights, against_highlights, consensus } = judgment
     const forName = player_a.name
     const againstName = player_b?.name ?? 'Opponent'
-    const winnerLabel = winner === 'tie'
-      ? "It's a tie!"
-      : `${winner === 'for' ? forName : againstName} wins (${winner.toUpperCase()})`
 
     const text = [
       `⚡ Vibe Debate: "${title}"`,
       ``,
       `${forName} (FOR) vs ${againstName} (AGAINST)`,
       ``,
-      `🏆 ${winnerLabel}`,
-      `  ${forName}: ${scores.for.total}/40`,
-      `  ${againstName}: ${scores.against.total}/40`,
+      `🟣 Best from ${forName}:`,
+      ...for_highlights.map(p => `  • ${p}`),
       ``,
-      summary,
+      `🟢 Best from ${againstName}:`,
+      ...against_highlights.map(p => `  • ${p}`),
+      ``,
+      `🤝 Consensus: ${consensus}`,
     ].join('\n')
 
     navigator.clipboard.writeText(text)

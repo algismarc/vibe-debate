@@ -45,13 +45,14 @@ interface Judgment {
 
 // ─── Prompts ─────────────────────────────────────────────────────────────────
 
-const DEBATE_SYSTEM = `You are a debate scriptwriter. You will receive a debate topic and two strategy briefs — one for the FOR side, one for the AGAINST side. Write a realistic, engaging 3-round debate between two skilled debaters.
+const DEBATE_SYSTEM = `You are a debate scriptwriter. You will receive a debate topic and two strategy briefs — one for the FOR side, one for the AGAINST side. Write a punchy, data-driven 3-round debate between two skilled debaters.
 
 Rules:
 - Each debater follows their strategist's brief as closely as possible.
-- Each turn should be roughly 150-250 words.
-- The debate should feel like two distinct voices, not one author.
-- Rebuttals must directly engage with what the other side actually argued in prior rounds.
+- Each turn MUST be short: 4–6 bullet points only. No prose paragraphs.
+- Every bullet point should include a specific statistic, figure, study, or concrete data point where possible. Make the numbers real and plausible.
+- Rebuttals must directly counter specific numbers or claims the other side made — don't just pivot, challenge the data.
+- Keep language sharp and direct. No filler. No waffle.
 - Do not editorialize or add commentary. Write only the debate itself.
 - Do not declare a winner. That is not your job.
 
@@ -59,44 +60,42 @@ Format your response EXACTLY like this, including the headers:
 
 ## Round 1: Opening Statements
 
-**FOR:** [Debater A's opening argument]
+**FOR:** [4–6 bullet points with stats]
 
-**AGAINST:** [Debater B's opening argument]
+**AGAINST:** [4–6 bullet points with stats]
 
 ## Round 2: Rebuttals
 
-**FOR:** [Debater A's rebuttal to B's opening]
+**FOR:** [4–6 bullet points directly countering AGAINST's data]
 
-**AGAINST:** [Debater B's rebuttal to A's opening]
+**AGAINST:** [4–6 bullet points directly countering FOR's data]
 
 ## Round 3: Closing Arguments
 
-**FOR:** [Debater A's closing]
+**FOR:** [4–6 bullet points, strongest data first]
 
-**AGAINST:** [Debater B's closing]`
+**AGAINST:** [4–6 bullet points, strongest data first]`
 
-const JUDGE_SYSTEM = `You are a rigorous, neutral debate judge with a background in formal argumentation, logic, and rhetoric. You have no stake in the outcome. Your job is to evaluate what actually happened in this debate — not what could have been argued, but what was argued.
+const JUDGE_SYSTEM = `You are a rigorous, neutral debate judge. Your primary focus is on data quality — which side used stronger statistics, more credible evidence, and better-grounded claims.
 
-Score each debater on these four criteria (1–10 scale). Be discriminating: a 7 means genuinely good, a 9 means exceptional. Do not cluster scores around the middle to seem balanced.
+Score each debater on these four criteria (1–10 scale). Be discriminating: a 7 means genuinely good, a 9 means exceptional. Do not cluster scores around the middle.
 
-1. Argument Strength — Were the core claims logically sound and well-structured? Did they build a coherent case across all three rounds, or just make isolated points? Penalise logical fallacies, unsupported assertions, and internal contradictions.
+1. Argument Strength — Were the core claims logically sound? Did the data points actually support the conclusion being made? Penalise logical leaps, cherry-picked stats, and unsupported assertions.
 
-2. Persuasiveness — Would a sceptical, neutral observer actually be moved? Distinguish between arguments that sound good and arguments that genuinely shift the burden of proof.
+2. Persuasiveness — Would a sceptical, data-literate observer actually be moved? Numbers alone aren't enough — did they deploy them effectively?
 
-3. Evidence & Reasoning — Did they ground claims in concrete reasoning, real-world examples, data, or analogies? Vague generalities score low. Specific, well-deployed evidence scores high.
+3. Evidence & Data Quality — This is the most important criterion. Were the statistics specific and credible? Did they cite real studies, real figures, real-world examples? Vague generalities score 1–3. Specific, well-sourced data scores 7–10.
 
-4. Rhetorical Skill — Was the language precise and effective? Did they control the framing of the debate? Did they anticipate and neutralise the other side's strongest points?
+4. Rhetorical Skill — Did they control the framing? Did they directly counter the other side's numbers, or just talk past them?
 
-The total is the sum of all four scores (max 40).
+The total is the sum of all four scores (max 40). Weight your assessment toward Evidence & Data Quality — a side that dominated on data should win even if their rhetoric was weaker.
 
-For your summary: write exactly 3 paragraphs as a sharp, analytical third-party observer. Paragraph 1: identify the decisive factor that separated the two sides — what did the winner do that the loser did not? Paragraph 2: identify the weakest moment or missed opportunity for each debater — be specific, quote or closely paraphrase the debate. Paragraph 3: deliver the verdict with clear reasoning tied directly to the scores.
+For your summary: write 2 sentences maximum. Identify which side had stronger data and why they won. Be blunt.
 
-Do not be diplomatic. Do not hedge. If one side was significantly stronger, say so and explain why.
-
-Declare a winner. Only call a tie if the totals are equal AND the quality of argumentation is genuinely indistinguishable across all criteria.
+Declare a winner. Only call a tie if the totals are equal AND data quality was genuinely indistinguishable.
 
 Respond with ONLY valid JSON, no markdown fences, no preamble:
-{"scores":{"for":{"argument":N,"persuasiveness":N,"evidence":N,"rhetoric":N,"total":N},"against":{"argument":N,"persuasiveness":N,"evidence":N,"rhetoric":N,"total":N}},"winner":"for"|"against"|"tie","summary":"Your 3-paragraph ruling here."}`
+{"scores":{"for":{"argument":N,"persuasiveness":N,"evidence":N,"rhetoric":N,"total":N},"against":{"argument":N,"persuasiveness":N,"evidence":N,"rhetoric":N,"total":N}},"winner":"for"|"against"|"tie","summary":"Your 2-sentence verdict here."}`
 
 // ─── Handler ─────────────────────────────────────────────────────────────────
 
@@ -142,6 +141,31 @@ export default async (req: Request) => {
     return
   }
 
+  // ── Global hourly rate limit ───────────────────────────────────────────────
+  // Counts debates that have moved past 'waiting' in the last hour.
+  // Prevents a bot from burning credits by flooding session creation.
+
+  const HOURLY_DEBATE_LIMIT = 20
+  const hourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString()
+  const { count: recentDebates } = await supabase
+    .from('sessions')
+    .select('*', { count: 'exact', head: true })
+    .neq('status', 'waiting')
+    .gte('created_at', hourAgo)
+
+  if ((recentDebates ?? 0) >= HOURLY_DEBATE_LIMIT) {
+    console.warn(`debate-background: hourly limit reached (${recentDebates} debates in last hour)`)
+    await setError(supabase, session_id, 'Service is temporarily at capacity. Please try again later.')
+    return
+  }
+
+  // ── Cap input lengths server-side ─────────────────────────────────────────
+  // Prevents oversized briefs / titles from inflating token costs.
+
+  const title = s.title.slice(0, 200)
+  const playerA = { ...s.player_a, brief: s.player_a.brief.slice(0, 2000) }
+  const playerB = { ...s.player_b, brief: s.player_b.brief.slice(0, 2000) }
+
   // ── Set status → debating ─────────────────────────────────────────────────
 
   await supabase
@@ -161,7 +185,7 @@ export default async (req: Request) => {
       messages: [
         {
           role: 'user',
-          content: buildDebatePrompt(s.title, s.player_a, s.player_b),
+          content: buildDebatePrompt(title, playerA, playerB),
         },
       ],
     })
@@ -188,13 +212,13 @@ export default async (req: Request) => {
   try {
     const judgeMsg = await anthropic.messages.create({
       model: 'claude-sonnet-4-6',
-      max_tokens: 1000,
+      max_tokens: 600,
       temperature: 0.3,
       system: JUDGE_SYSTEM,
       messages: [
         {
           role: 'user',
-          content: `Debate topic: "${s.title}"\n\n${transcript}\n\nJudge this debate now.`,
+          content: `Debate topic: "${title}"\n\n${transcript}\n\nJudge this debate now.`,
         },
       ],
     })
@@ -217,13 +241,13 @@ export default async (req: Request) => {
     try {
       const retryMsg = await anthropic.messages.create({
         model: 'claude-sonnet-4-6',
-        max_tokens: 1000,
+        max_tokens: 600,
         temperature: 0,
         system: JUDGE_SYSTEM,
         messages: [
           {
             role: 'user',
-            content: `Debate topic: "${s.title}"\n\n${transcript}\n\nJudge this debate now.`,
+            content: `Debate topic: "${title}"\n\n${transcript}\n\nJudge this debate now.`,
           },
           { role: 'assistant', content: rawJudgment },
           {
@@ -255,12 +279,12 @@ export default async (req: Request) => {
     .update({ judgment, status: 'complete' })
     .eq('id', session_id)
 
-  console.log(`debate-background: session ${session_id} complete. Winner: ${judgment.winner}`)
+  console.log(`debate-background: session ${session_id} complete. Topic: "${title}" | Winner: ${judgment.winner}`)
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-function buildDebatePrompt(title: string, playerA: Player, playerB: Player): string {
+export function buildDebatePrompt(title: string, playerA: Player, playerB: Player): string {
   const toneInstruction = (tone: string | null) =>
     tone ? `Tone: ${tone} — let this define the voice and manner of delivery throughout.` : 'Tone: balanced and professional.'
 
@@ -281,7 +305,7 @@ ${toneInstruction(playerB.tone)}
 Write the debate now.`
 }
 
-function parseJudgment(text: string): Judgment | null {
+export function parseJudgment(text: string): Judgment | null {
   // Strip markdown fences if present
   const cleaned = text.replace(/```json?\s*/gi, '').replace(/```\s*/g, '').trim()
 
@@ -303,7 +327,7 @@ function parseJudgment(text: string): Judgment | null {
   return null
 }
 
-function isValidJudgment(obj: unknown): obj is Judgment {
+export function isValidJudgment(obj: unknown): obj is Judgment {
   if (typeof obj !== 'object' || obj === null) return false
   const j = obj as Record<string, unknown>
 

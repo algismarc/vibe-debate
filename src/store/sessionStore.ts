@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { supabase } from '../lib/supabase'
 import type { Session, Config } from '../lib/types'
+import { generateJoinCode, derivePlayerSide } from '../lib/utils'
 
 interface SessionState {
   // Session data
@@ -26,6 +27,8 @@ interface SessionState {
   setSession: (session: Session) => void
 }
 
+// generateJoinCode and derivePlayerSide live in ../lib/utils (testable there)
+
 function getOrCreatePlayerId(): string {
   let id = sessionStorage.getItem('vibe-debate-player-id')
   if (!id) {
@@ -35,20 +38,6 @@ function getOrCreatePlayerId(): string {
   return id
 }
 
-function generateJoinCode(): string {
-  const chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789' // no 0/O/1/I/L
-  let code = ''
-  for (let i = 0; i < 6; i++) {
-    code += chars[Math.floor(Math.random() * chars.length)]
-  }
-  return code
-}
-
-function derivePlayerSide(session: Session, playerId: string): 'a' | 'b' | null {
-  if (session.player_a?.id === playerId) return 'a'
-  if (session.player_b?.id === playerId) return 'b'
-  return null
-}
 
 export const useSessionStore = create<SessionState>((set, get) => ({
   session: null,
@@ -75,9 +64,12 @@ export const useSessionStore = create<SessionState>((set, get) => ({
   },
 
   setSession: (session) => {
-    const { playerId, session: prev } = get()
+    const { playerId, session: prev, playerSide: currentSide } = get()
     const side = derivePlayerSide(session, playerId)
-    set({ session, playerSide: side })
+    // Preserve existing playerSide if derivePlayerSide can't resolve it —
+    // avoids nulling out a known side during transient Realtime race conditions.
+    const resolvedSide = side ?? currentSide
+    set({ session, playerSide: resolvedSide })
 
     // Trigger debate only when we witness the transition to both-ready.
     // Requires prev !== null so a page refresh (prev = null) never re-triggers
@@ -89,7 +81,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
       session.player_b?.ready &&
       !(prev.player_a?.ready && prev.player_b?.ready)
 
-    if (bothJustReady && side === 'a') {
+    if (bothJustReady && resolvedSide === 'a') {
       get().triggerDebate()
     }
   },
@@ -253,21 +245,34 @@ export const useSessionStore = create<SessionState>((set, get) => ({
   },
 
   subscribeToSession: (joinCode) => {
+    const code = joinCode.toUpperCase()
     const channel = supabase
-      .channel(`session:${joinCode}`)
+      .channel(`session:${code}`)
       .on(
         'postgres_changes',
         {
           event: 'UPDATE',
           schema: 'public',
           table: 'sessions',
-          filter: `join_code=eq.${joinCode}`,
+          filter: `join_code=eq.${code}`,
         },
         (payload) => {
-          get().setSession(payload.new as Session)
+          const updated = payload.new as Session
+          // Guard: only process events for our session (defence against
+          // server-side filter not evaluating correctly in some Supabase
+          // configurations).
+          if (updated?.join_code === code) {
+            get().setSession(updated)
+          }
         }
       )
-      .subscribe()
+      .subscribe((status, err) => {
+        if (status === 'SUBSCRIBED') {
+          console.debug(`[Realtime] subscribed to session ${code}`)
+        } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+          console.warn(`[Realtime] subscription ${status} for session ${code}`, err)
+        }
+      })
 
     return () => {
       supabase.removeChannel(channel)

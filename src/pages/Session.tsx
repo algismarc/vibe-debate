@@ -12,12 +12,12 @@ export default function Session() {
   const { session, loading, error, playerSide, fetchSession, subscribeToSession } =
     useSessionStore()
 
-  // Fetch session if not already loaded
+  // Always fetch on mount to get the latest DB state.
+  // This catches status transitions (e.g. 'waiting' → 'prompting') that may have
+  // fired before the Realtime subscription was fully established.
   useEffect(() => {
     if (!joinCode) return
-    if (!session || session.join_code !== joinCode) {
-      fetchSession(joinCode)
-    }
+    fetchSession(joinCode)
   }, [joinCode])
 
   // Subscribe to Realtime updates
@@ -26,6 +26,17 @@ export default function Session() {
     const unsubscribe = subscribeToSession(joinCode)
     return unsubscribe
   }, [joinCode])
+
+  // Polling fallback: re-fetch every 4 s while in a transitional state.
+  // Guards against Supabase Realtime events being missed (WebSocket race,
+  // dropped connection, Strict Mode double-mount, etc.).
+  useEffect(() => {
+    if (!joinCode || !session) return
+    if (session.status === 'complete' || session.status === 'error') return
+
+    const id = setInterval(() => fetchSession(joinCode), 4000)
+    return () => clearInterval(id)
+  }, [joinCode, session?.status])
 
   // Redirect non-players to the join page if session is still open
   useEffect(() => {

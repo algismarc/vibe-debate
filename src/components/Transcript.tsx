@@ -58,18 +58,20 @@ export default function Transcript({ transcript, visibleTurns, scrollToLatest }:
                     {visible && (
                       <div className={`flex ${isFor ? 'justify-start' : 'justify-end'}`}>
                         <div
-                          className={`max-w-[85%] rounded-2xl px-5 py-4 ${
+                          className={`max-w-[85%] paint-bubble ${
                             isFor
-                              ? 'bg-purple-950/60 border border-purple-800/40 rounded-tl-sm slide-from-left'
-                              : 'bg-green-950/60 border border-green-800/40 rounded-tr-sm slide-from-right'
+                              ? 'paint-bubble-light slide-from-left'
+                              : 'paint-bubble-dark slide-from-right'
                           }`}
                         >
                           <p className={`text-xs font-bold uppercase tracking-widest mb-2 ${
-                            isFor ? 'text-purple-400' : 'text-green-400'
+                            isFor ? 'text-gray-900/70' : 'text-gray-500'
                           }`}>
                             {isFor ? 'FOR' : 'AGAINST'}
                           </p>
-                          <p className="text-gray-200 text-sm leading-relaxed whitespace-pre-wrap">
+                          <p className={`text-sm leading-relaxed whitespace-pre-wrap ${
+                            isFor ? 'text-gray-900' : 'text-gray-200'
+                          }`}>
                             {turn.text}
                           </p>
                         </div>

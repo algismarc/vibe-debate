@@ -282,6 +282,48 @@ button:active, [role="button"]:active {
 }
 .blob-wobble { animation: wobble 14s ease-in-out infinite; }
 
+/* ─── Rothko-style painted panel ────────────────────────────
+   Terracotta field with a soft-edged dark block inside, painted
+   via feTurbulence displacement + gaussian blur on an SVG rect.
+   Use as a wrapper class on section/card containers.
+   ─────────────────────────────────────────────────────────── */
+.rothko-panel {
+  background-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400' preserveAspectRatio='none'><defs><filter id='r' x='-10%25' y='-10%25' width='120%25' height='120%25'><feTurbulence type='fractalNoise' baseFrequency='0.018 0.02' numOctaves='2' seed='7'/><feDisplacementMap in='SourceGraphic' scale='34'/><feGaussianBlur stdDeviation='5'/></filter><filter id='f'><feTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='2'/><feColorMatrix values='0 0 0 0 0.55  0 0 0 0 0.24  0 0 0 0 0.1  0 0 0 0.4 0'/></filter></defs><rect width='400' height='400' fill='%238a3818'/><rect width='400' height='400' filter='url(%23f)' opacity='0.55'/><rect x='28' y='30' width='344' height='340' fill='%23120608' filter='url(%23r)'/></svg>") !important;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-color: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 2.75rem 2rem !important;
+}
+
+/* ─── Painterly chat bubbles ────────────────────────────────
+   Single-colour painted block with soft-ragged edges (no inner
+   box). Two variants distinguish sides by lightness only.
+   ─────────────────────────────────────────────────────────── */
+.paint-bubble {
+  -webkit-mask-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200' preserveAspectRatio='none'><defs><filter id='b' x='-8%25' y='-15%25' width='116%25' height='130%25'><feTurbulence type='fractalNoise' baseFrequency='0.02 0.08' numOctaves='2' seed='13'/><feDisplacementMap in='SourceGraphic' scale='22'/><feGaussianBlur stdDeviation='3'/></filter></defs><rect x='14' y='14' width='372' height='172' fill='black' filter='url(%23b)'/></svg>");
+          mask-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 200' preserveAspectRatio='none'><defs><filter id='b' x='-8%25' y='-15%25' width='116%25' height='130%25'><feTurbulence type='fractalNoise' baseFrequency='0.02 0.08' numOctaves='2' seed='13'/><feDisplacementMap in='SourceGraphic' scale='22'/><feGaussianBlur stdDeviation='3'/></filter></defs><rect x='14' y='14' width='372' height='172' fill='black' filter='url(%23b)'/></svg>");
+  -webkit-mask-size: 100% 100%;
+          mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 1.75rem 1.5rem !important;
+}
+.paint-bubble-light {
+  background-color: #c45830 !important;
+}
+.paint-bubble-dark {
+  background-color: #160608 !important;
+}
+
 /* ─── Card grain overlay (stronger paper/plaster texture) ──── */
 .card-grain::after {
   content: '';

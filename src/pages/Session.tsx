@@ -58,7 +58,7 @@ export default function Session() {
           onClick={() => navigate('/')}
           className="text-gray-400 hover:text-white text-sm transition-colors"
         >
-          ← Back to home
+          Back to home
         </button>
       </main>
     )

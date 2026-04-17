@@ -37,7 +37,7 @@ export default function ErrorView({ message, sessionId }: Props) {
             onClick={() => navigate('/')}
             className="w-full text-gray-500 hover:text-gray-300 text-sm py-2 transition-colors"
           >
-            ← Back to home
+            Back to home
           </button>
         </div>
       </div>

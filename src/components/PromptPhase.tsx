@@ -84,9 +84,7 @@ export default function PromptPhase({ session }: Props) {
         <div className="text-center flex flex-col items-center gap-5">
           {/* Animated VS spark */}
           <div className="flex items-center gap-4">
-            <span className="text-3xl font-bold text-purple-400 animate-pulse">⚡</span>
             <span className="text-gray-600 text-lg font-bold uppercase tracking-widest animate-vsSpark">VS</span>
-            <span className="text-3xl font-bold text-green-400 animate-pulse" style={{ animationDelay: '0.3s' }}>⚡</span>
           </div>
           <div>
             <h2 className="text-2xl font-bold text-white mb-2">Summoning the debaters...</h2>
@@ -161,9 +159,6 @@ export default function PromptPhase({ session }: Props) {
                     : 'border-gray-800 bg-gray-900 hover:border-gray-600 hover:scale-[1.03] hover:bg-gray-800/60'
                 } ${submitted ? 'opacity-50 cursor-default' : 'cursor-pointer active:scale-95'}`}
               >
-                <span className={`text-xl leading-none transition-transform ${selected ? 'scale-110' : ''}`}>
-                  {t.emoji}
-                </span>
                 <span className={`text-xs font-semibold ${selected ? sideColor : 'text-white'}`}>
                   {t.label}
                 </span>
@@ -223,8 +218,7 @@ export default function PromptPhase({ session }: Props) {
         ) : (
           <div className="w-full flex flex-col items-center gap-3">
             <div className="flex items-center gap-2 text-green-400 text-sm font-medium">
-              <span>✓</span>
-              <span>Brief submitted{tone ? ` · ${TONES.find(t => t.id === tone)?.emoji} ${TONES.find(t => t.id === tone)?.label}` : ''}</span>
+              <span>Brief submitted{tone ? ` · ${TONES.find(t => t.id === tone)?.label}` : ''}</span>
             </div>
             <OpponentStatus name={opponentPlayer?.name ?? 'Opponent'} ready={opponentReady} />
           </div>
@@ -238,7 +232,7 @@ function OpponentStatus({ name, ready }: { name: string; ready: boolean }) {
   if (ready) {
     return (
       <p className="text-gray-400 text-sm">
-        <span className="text-green-400">✓</span> {name} is ready
+{name} is ready
       </p>
     )
   }

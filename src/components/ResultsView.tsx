@@ -21,17 +21,17 @@ export default function ResultsView({ session }: Props) {
 
   function handleShare() {
     const text = [
-      `⚡ Vibe Debate: "${title}"`,
+      `Vibe Debate: "${title}"`,
       ``,
       `${forName} (FOR) vs ${againstName} (AGAINST)`,
       ``,
-      `🟣 Best from ${forName}:`,
-      ...for_highlights.map(p => `  • ${p}`),
+      `Best from ${forName}:`,
+      ...for_highlights.map(p => `  - ${p}`),
       ``,
-      `🟢 Best from ${againstName}:`,
-      ...against_highlights.map(p => `  • ${p}`),
+      `Best from ${againstName}:`,
+      ...against_highlights.map(p => `  - ${p}`),
       ``,
-      `🤝 Consensus: ${consensus}`,
+      `Consensus: ${consensus}`,
     ].join('\n')
 
     navigator.clipboard.writeText(text)
@@ -100,7 +100,6 @@ export default function ResultsView({ session }: Props) {
           {/* Consensus */}
           <div className="w-full bg-gray-900 border border-gray-700 rounded-2xl p-5">
             <div className="flex items-center gap-2 mb-3">
-              <span className="text-xl">🤝</span>
               <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">Consensus</p>
             </div>
             <p className="text-gray-200 text-sm leading-relaxed">{consensus}</p>
@@ -116,13 +115,13 @@ export default function ResultsView({ session }: Props) {
           onClick={handleShare}
           className="w-full bg-gray-800 hover:bg-gray-700 border border-gray-700 text-white font-semibold rounded-xl px-6 py-3 transition-colors"
         >
-          {copied ? '✓ Copied to clipboard!' : '📋 Share Results'}
+          {copied ? 'Copied to clipboard!' : 'Share Results'}
         </button>
         <button
           onClick={() => navigate('/')}
           className="w-full bg-purple-600 hover:bg-purple-500 text-white font-semibold rounded-xl px-6 py-3 transition-colors"
         >
-          New Debate →
+          New Debate
         </button>
       </div>
     </main>

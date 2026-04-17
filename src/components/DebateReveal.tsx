@@ -198,7 +198,6 @@ function ConsensusPanel({
         style={{ animationDelay: '0.3s', opacity: 0 }}
       >
         <div className="flex items-center gap-2 mb-3">
-          <span className="text-xl">🤝</span>
           <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">Consensus</p>
         </div>
         <p className="text-gray-200 text-sm leading-relaxed">{judgment.consensus}</p>
@@ -319,17 +318,17 @@ function Actions({ session }: { session: Session }) {
     const againstName = player_b?.name ?? 'Opponent'
 
     const text = [
-      `⚡ Vibe Debate: "${title}"`,
+      `Vibe Debate: "${title}"`,
       ``,
       `${forName} (FOR) vs ${againstName} (AGAINST)`,
       ``,
-      `🟣 Best from ${forName}:`,
-      ...for_highlights.map(p => `  • ${p}`),
+      `Best from ${forName}:`,
+      ...for_highlights.map(p => `  - ${p}`),
       ``,
-      `🟢 Best from ${againstName}:`,
-      ...against_highlights.map(p => `  • ${p}`),
+      `Best from ${againstName}:`,
+      ...against_highlights.map(p => `  - ${p}`),
       ``,
-      `🤝 Consensus: ${consensus}`,
+      `Consensus: ${consensus}`,
     ].join('\n')
 
     navigator.clipboard.writeText(text)
@@ -343,13 +342,13 @@ function Actions({ session }: { session: Session }) {
         onClick={handleShare}
         className="w-full bg-gray-800 hover:bg-gray-700 active:scale-95 border border-gray-700 text-white font-semibold rounded-xl px-6 py-3 transition-all"
       >
-        {copied ? '✓ Copied!' : '📋 Share Results'}
+        {copied ? 'Copied!' : 'Share Results'}
       </button>
       <button
         onClick={() => navigate('/')}
         className="w-full bg-purple-600 hover:bg-purple-500 active:scale-95 text-white font-semibold rounded-xl px-6 py-3 transition-all"
       >
-        New Debate →
+        New Debate
       </button>
     </div>
   )

@@ -62,7 +62,6 @@ export default function Join() {
     return (
       <main className="flex flex-col items-center justify-center min-h-svh p-4">
         <div className="w-full max-w-sm text-center flex flex-col gap-5">
-          <p className="text-4xl">{isComplete ? '🏆' : '⚡'}</p>
           <div>
             <h2 className="text-white font-bold text-xl mb-1">
               {isComplete ? 'Debate complete' : 'Debate in progress'}
@@ -83,13 +82,13 @@ export default function Join() {
             onClick={() => navigate(`/session/${joinCode}`)}
             className="w-full bg-purple-600 hover:bg-purple-500 text-white font-semibold rounded-xl px-6 py-3 transition-colors"
           >
-            {isComplete ? 'View results →' : 'Watch debate →'}
+            {isComplete ? 'View results' : 'Watch debate'}
           </button>
           <button
             onClick={() => navigate('/')}
             className="text-gray-600 hover:text-gray-400 text-sm transition-colors"
           >
-            ← Back to home
+Back to home
           </button>
         </div>
       </main>
@@ -148,7 +147,7 @@ export default function Join() {
               disabled={loading}
               className="w-full bg-green-700 hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-lg px-6 py-3 transition-colors"
             >
-              {loading ? 'Joining...' : "Let's Debate →"}
+              {loading ? 'Joining...' : "Let's Debate"}
             </button>
           </form>
         </section>
@@ -157,7 +156,7 @@ export default function Join() {
           onClick={() => navigate('/')}
           className="text-gray-600 hover:text-gray-400 text-sm transition-colors text-center"
         >
-          ← Back to home
+          Back to home
         </button>
       </div>
     </main>

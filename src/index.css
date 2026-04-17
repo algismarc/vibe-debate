@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'Gotham Ultra';
+  src: url('/fonts/GothamUltra.otf') format('opentype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* ─── Warm Academia — terracotta & orange-red palette ───────────────────────
    All colour overrides live here. No component files need changing — Tailwind
    utility classes pick up these tokens automatically.
@@ -49,13 +57,13 @@
      Each size has slightly different asymmetry so shapes feel hand-painted,
      not algorithmically generated.
      ─────────────────────────────────────────────────────────────────────── */
-  --radius-sm:   3px  9px  4px  7px /  7px  3px  9px  4px;
-  --radius-md:   6px 18px  8px 14px / 13px  5px 18px  8px;
-  --radius-lg:   8px 24px 10px 20px / 19px  6px 24px 10px;
-  --radius-xl:   7px 30px 11px 24px / 23px  5px 30px 11px;
-  --radius-2xl: 10px 38px 14px 30px / 29px  7px 38px 14px;
-  --radius-3xl: 13px 46px 19px 38px / 35px  9px 46px 19px;
-  --radius-full: 47% 53% 46% 54% / 53% 47% 54% 46%;
+  --radius-sm:   2px 14px  5px 11px / 12px  3px 15px  6px;
+  --radius-md:   4px 28px 11px  9px / 22px  6px  8px 17px;
+  --radius-lg:  18px  6px 30px 11px /  9px 26px 12px 34px;
+  --radius-xl:   8px 42px 14px 26px / 31px  9px 48px 12px;
+  --radius-2xl: 48px 12px 36px 18px / 14px 52px 20px 42px;
+  --radius-3xl: 14px 62px 22px 50px / 48px 16px 68px 24px;
+  --radius-full: 62% 38% 54% 46% / 41% 59% 43% 57%;
 }
 
 :root {
@@ -66,14 +74,13 @@ body {
   margin: 0;
   background: #0e0806;
   color: #eddcc8;
-  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Gotham Ultra', system-ui, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Serif headings — gives the "academia" feel without loading external fonts */
-h1, h2 {
-  font-family: Georgia, 'Book Antiqua', 'Palatino Linotype', serif;
+h1, h2, h3 {
+  font-family: 'Gotham Ultra', system-ui, sans-serif;
 }
 
 #root {
@@ -107,12 +114,7 @@ h1, h2 {
   100% { background-position:  250% center; }
 }
 .animate-shimmer {
-  background: linear-gradient(90deg, #ce6838 0%, #e09060 30%, #d4a060 55%, #ce6838 80%, #9c3c10 100%);
-  background-size: 250% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: shimmer 4s linear infinite;
+  color: #ce6838;
 }
 
 /* ─── Glow pulses — muted, organic ──────────────────────────── */
@@ -170,26 +172,137 @@ h1, h2 {
 }
 .animate-vsSpark { animation: vsSpark 1.4s ease-in-out infinite; }
 
-/* ─── Blob button micro-interaction ─────────────────────────────
-   Buttons & interactive elements get a tiny rotation + squish on
-   press, reinforcing the "paint dab" organic feel.
+/* ─── Brush-stroke buttons ──────────────────────────────────────
+   Primary/action buttons (any <button> with a rounded-* class) get
+   a turbulence-displaced rectangle as mask-image. The button's own
+   colour/gradient shows through the ragged brush shape. Three seed
+   variants cycle via :nth-of-type so no two adjacent buttons look
+   identical.
    ─────────────────────────────────────────────────────────────── */
+button[class*="rounded-"],
+[role="button"][class*="rounded-"] {
+  -webkit-mask-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 100' preserveAspectRatio='none'><defs><filter id='b' x='-6%25' y='-40%25' width='112%25' height='180%25'><feTurbulence type='fractalNoise' baseFrequency='0.012 0.09' numOctaves='2' seed='3'/><feDisplacementMap in='SourceGraphic' scale='26'/></filter></defs><rect x='14' y='12' width='372' height='76' fill='black' filter='url(%23b)'/></svg>");
+          mask-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 100' preserveAspectRatio='none'><defs><filter id='b' x='-6%25' y='-40%25' width='112%25' height='180%25'><feTurbulence type='fractalNoise' baseFrequency='0.012 0.09' numOctaves='2' seed='3'/><feDisplacementMap in='SourceGraphic' scale='26'/></filter></defs><rect x='14' y='12' width='372' height='76' fill='black' filter='url(%23b)'/></svg>");
+  -webkit-mask-size: 100% 100%;
+          mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+          mask-position: center;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding-inline: 2rem !important;
+  padding-block: 1rem !important;
+}
+button[class*="rounded-"]:nth-of-type(3n+1),
+[role="button"][class*="rounded-"]:nth-of-type(3n+1) {
+  -webkit-mask-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 100' preserveAspectRatio='none'><defs><filter id='b' x='-6%25' y='-40%25' width='112%25' height='180%25'><feTurbulence type='fractalNoise' baseFrequency='0.02 0.12' numOctaves='3' seed='11'/><feDisplacementMap in='SourceGraphic' scale='22'/></filter></defs><rect x='10' y='16' width='380' height='68' fill='black' filter='url(%23b)'/></svg>");
+          mask-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 100' preserveAspectRatio='none'><defs><filter id='b' x='-6%25' y='-40%25' width='112%25' height='180%25'><feTurbulence type='fractalNoise' baseFrequency='0.02 0.12' numOctaves='3' seed='11'/><feDisplacementMap in='SourceGraphic' scale='22'/></filter></defs><rect x='10' y='16' width='380' height='68' fill='black' filter='url(%23b)'/></svg>");
+}
+button[class*="rounded-"]:nth-of-type(3n+2),
+[role="button"][class*="rounded-"]:nth-of-type(3n+2) {
+  -webkit-mask-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 100' preserveAspectRatio='none'><defs><filter id='b' x='-6%25' y='-40%25' width='112%25' height='180%25'><feTurbulence type='fractalNoise' baseFrequency='0.009 0.07' numOctaves='2' seed='27'/><feDisplacementMap in='SourceGraphic' scale='30'/></filter></defs><rect x='18' y='9' width='364' height='82' fill='black' filter='url(%23b)'/></svg>");
+          mask-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 100' preserveAspectRatio='none'><defs><filter id='b' x='-6%25' y='-40%25' width='112%25' height='180%25'><feTurbulence type='fractalNoise' baseFrequency='0.009 0.07' numOctaves='2' seed='27'/><feDisplacementMap in='SourceGraphic' scale='30'/></filter></defs><rect x='18' y='9' width='364' height='82' fill='black' filter='url(%23b)'/></svg>");
+}
+
+/* ─── Brush-stroke inputs & selects ─────────────────────────────
+   Same masking trick, but different turbulence profile: higher
+   base-frequency with lower displacement, so edges look more like
+   a steady drag of a wider brush (vs. the quick flick of the
+   buttons). Rect sits nearly full-height so text has clearance.
+   ─────────────────────────────────────────────────────────────── */
+input[class*="rounded-"],
+select[class*="rounded-"],
+textarea[class*="rounded-"] {
+  -webkit-mask-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 100' preserveAspectRatio='none'><defs><filter id='b' x='-4%25' y='-30%25' width='108%25' height='160%25'><feTurbulence type='fractalNoise' baseFrequency='0.04 0.05' numOctaves='2' seed='50'/><feDisplacementMap in='SourceGraphic' scale='14'/></filter></defs><rect x='8' y='8' width='384' height='84' fill='black' filter='url(%23b)'/></svg>");
+          mask-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 100' preserveAspectRatio='none'><defs><filter id='b' x='-4%25' y='-30%25' width='108%25' height='160%25'><feTurbulence type='fractalNoise' baseFrequency='0.04 0.05' numOctaves='2' seed='50'/><feDisplacementMap in='SourceGraphic' scale='14'/></filter></defs><rect x='8' y='8' width='384' height='84' fill='black' filter='url(%23b)'/></svg>");
+  -webkit-mask-size: 100% 100%;
+          mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+          mask-position: center;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding-inline: 1.5rem !important;
+}
+input[class*="rounded-"]:nth-of-type(3n+1),
+select[class*="rounded-"]:nth-of-type(3n+1),
+textarea[class*="rounded-"]:nth-of-type(3n+1) {
+  -webkit-mask-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 100' preserveAspectRatio='none'><defs><filter id='b' x='-4%25' y='-30%25' width='108%25' height='160%25'><feTurbulence type='fractalNoise' baseFrequency='0.06 0.04' numOctaves='3' seed='72'/><feDisplacementMap in='SourceGraphic' scale='11'/></filter></defs><rect x='10' y='6' width='380' height='88' fill='black' filter='url(%23b)'/></svg>");
+          mask-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 100' preserveAspectRatio='none'><defs><filter id='b' x='-4%25' y='-30%25' width='108%25' height='160%25'><feTurbulence type='fractalNoise' baseFrequency='0.06 0.04' numOctaves='3' seed='72'/><feDisplacementMap in='SourceGraphic' scale='11'/></filter></defs><rect x='10' y='6' width='380' height='88' fill='black' filter='url(%23b)'/></svg>");
+}
+input[class*="rounded-"]:nth-of-type(3n+2),
+select[class*="rounded-"]:nth-of-type(3n+2),
+textarea[class*="rounded-"]:nth-of-type(3n+2) {
+  -webkit-mask-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 100' preserveAspectRatio='none'><defs><filter id='b' x='-4%25' y='-30%25' width='108%25' height='160%25'><feTurbulence type='fractalNoise' baseFrequency='0.03 0.06' numOctaves='2' seed='99'/><feDisplacementMap in='SourceGraphic' scale='17'/></filter></defs><rect x='6' y='10' width='388' height='80' fill='black' filter='url(%23b)'/></svg>");
+          mask-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 100' preserveAspectRatio='none'><defs><filter id='b' x='-4%25' y='-30%25' width='108%25' height='160%25'><feTurbulence type='fractalNoise' baseFrequency='0.03 0.06' numOctaves='2' seed='99'/><feDisplacementMap in='SourceGraphic' scale='17'/></filter></defs><rect x='6' y='10' width='388' height='80' fill='black' filter='url(%23b)'/></svg>");
+}
+
+/* Micro-interaction on press */
 button:active, [role="button"]:active {
-  transform: rotate(0.5deg) scale(0.97);
+  transform: rotate(-1.2deg) scale(0.96) translateY(1px);
   transition: transform 0.08s ease;
 }
 
-/* ─── Card grain overlay (very subtle paper texture) ─────────── */
+/* ─── Organic tilt variance ────────────────────────────────────
+   Anything with a blob radius picks up a tiny, deterministic
+   rotation based on its position in its parent. No two adjacent
+   shapes tilt the same way, so grids of cards read as hand-laid
+   rather than graph-paper aligned.
+   ─────────────────────────────────────────────────────────────── */
+[class*="rounded-"]:nth-child(3n)   { transform: rotate(-0.6deg); }
+[class*="rounded-"]:nth-child(3n+1) { transform: rotate( 0.8deg); }
+[class*="rounded-"]:nth-child(3n+2) { transform: rotate(-0.3deg); }
+[class*="rounded-"]:nth-child(5n+4) { transform: rotate( 1.1deg); }
+/* Don't tilt things that need crisp alignment or their own transforms */
+[class*="rounded-full"]:where(.avatar, .icon, [class*="w-"][class*="h-"]),
+[class*="animate-"],
+.no-tilt, .no-tilt * { transform: none !important; }
+
+/* ─── Slow idle wobble — some shapes breathe like clay ─────── */
+@keyframes wobble {
+  0%, 100% { border-radius: var(--radius-2xl); }
+  33%      { border-radius: 36px 18px 48px 12px / 52px 14px 42px 20px; }
+  66%      { border-radius: 12px 48px 18px 36px / 20px 42px 14px 52px; }
+}
+.blob-wobble { animation: wobble 14s ease-in-out infinite; }
+
+/* ─── Card grain overlay (stronger paper/plaster texture) ──── */
 .card-grain::after {
   content: '';
   position: absolute;
-  inset: 0;
+  inset: -2px;
   border-radius: inherit;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
-  background-size: 180px 180px;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.1  0 0 0 0 0.05  0 0 0 0 0.02  0 0 0 0.8 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 220px 220px;
   pointer-events: none;
-  opacity: 0.55;
+  opacity: 0.85;
   mix-blend-mode: overlay;
+}
+
+/* ─── Rough painted-edge shadow — double-offset, not centered ─ */
+[class*="rounded-xl"],
+[class*="rounded-2xl"],
+[class*="rounded-3xl"] {
+  box-shadow:
+    -3px 4px 0 0 rgba(22, 10, 6, 0.35),
+    6px 10px 22px -8px rgba(22, 10, 6, 0.55),
+    inset 0 0 0 1px rgba(237, 220, 200, 0.04);
 }
 
 /* ─── Scorecard row reveal (kept for any future use) ─────────── */

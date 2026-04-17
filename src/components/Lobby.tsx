@@ -67,13 +67,13 @@ export default function Lobby({ session }: Props) {
             onClick={copyCode}
             className="flex-1 flex items-center justify-center gap-1.5 bg-gray-800 hover:bg-gray-700 active:scale-95 border border-gray-700 text-white text-sm font-medium rounded-lg px-3 py-2 transition-all"
           >
-            {codeCopied ? '✓ Copied!' : '📋 Copy code'}
+            {codeCopied ? 'Copied!' : 'Copy code'}
           </button>
           <button
             onClick={copyLink}
             className="flex-1 flex items-center justify-center gap-1.5 bg-gray-800 hover:bg-gray-700 active:scale-95 border border-gray-700 text-white text-sm font-medium rounded-lg px-3 py-2 transition-all"
           >
-            {linkCopied ? '✓ Copied!' : '🔗 Copy link'}
+            {linkCopied ? 'Copied!' : 'Copy link'}
           </button>
         </div>
       </div>
@@ -88,7 +88,7 @@ export default function Lobby({ session }: Props) {
         <div className="flex items-center gap-3 bg-gray-900 border border-gray-800 rounded-xl px-4 py-3">
           <span className="text-xs font-bold text-purple-400 bg-purple-400/10 rounded px-2 py-0.5 shrink-0">FOR</span>
           <span className="text-white font-medium truncate">{session.player_a.name}</span>
-          <span className="ml-auto text-green-400 text-xs shrink-0">✓ Ready</span>
+          <span className="ml-auto text-green-400 text-xs shrink-0">Ready</span>
         </div>
 
         <div className="flex items-center gap-3 bg-gray-900 border border-gray-800 border-dashed rounded-xl px-4 py-3">

@@ -21,7 +21,7 @@ export default function SplashScreen({ onDone }: Props) {
       style={{
         position: 'fixed',
         inset: 0,
-        background: '#0f0f0f',
+        background: '#130b05',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -127,15 +127,15 @@ function Debater({ side, delay }: { side: 'left' | 'right'; delay: number }) {
           height: 64,
           borderRadius: '50%',
           background: isLeft
-            ? 'linear-gradient(135deg,#7c3aed,#a855f7)'
-            : 'linear-gradient(135deg,#0ea5e9,#38bdf8)',
+            ? 'linear-gradient(135deg,#a86020,#d4924a)'
+            : 'linear-gradient(135deg,#8a3c18,#c4683a)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           fontSize: '2rem',
           boxShadow: isLeft
-            ? '0 0 24px rgba(168,85,247,0.45)'
-            : '0 0 24px rgba(56,189,248,0.45)',
+            ? '0 0 24px rgba(212,146,74,0.45)'
+            : '0 0 24px rgba(196,104,58,0.45)',
         }}
       >
         {isLeft ? '🎤' : '🎙️'}
@@ -143,12 +143,12 @@ function Debater({ side, delay }: { side: 'left' | 'right'; delay: number }) {
       {/* Speech bubble */}
       <div
         style={{
-          background: isLeft ? 'rgba(168,85,247,0.15)' : 'rgba(56,189,248,0.15)',
-          border: `1px solid ${isLeft ? 'rgba(168,85,247,0.35)' : 'rgba(56,189,248,0.35)'}`,
+          background: isLeft ? 'rgba(212,146,74,0.15)' : 'rgba(196,104,58,0.15)',
+          border: `1px solid ${isLeft ? 'rgba(212,146,74,0.35)' : 'rgba(196,104,58,0.35)'}`,
           borderRadius: 10,
           padding: '3px 10px',
           fontSize: '0.7rem',
-          color: isLeft ? '#c084fc' : '#7dd3fc',
+          color: isLeft ? '#d4924a' : '#c4683a',
           letterSpacing: '0.04em',
         }}
       >

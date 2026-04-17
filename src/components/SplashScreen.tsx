@@ -21,7 +21,7 @@ export default function SplashScreen({ onDone }: Props) {
       style={{
         position: 'fixed',
         inset: 0,
-        background: '#130b05',
+        background: '#0e0806',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -60,7 +60,7 @@ export default function SplashScreen({ onDone }: Props) {
       <p
         style={{
           margin: 0,
-          color: '#6b7280',
+          color: '#7a5038',
           fontSize: '0.85rem',
           letterSpacing: '0.08em',
           textTransform: 'uppercase',
@@ -127,15 +127,15 @@ function Debater({ side, delay }: { side: 'left' | 'right'; delay: number }) {
           height: 64,
           borderRadius: '50%',
           background: isLeft
-            ? 'linear-gradient(135deg,#a86020,#d4924a)'
-            : 'linear-gradient(135deg,#8a3c18,#c4683a)',
+            ? 'linear-gradient(135deg,#9c3c10,#ce6838)'
+            : 'linear-gradient(135deg,#802810,#b84c38)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           fontSize: '2rem',
           boxShadow: isLeft
-            ? '0 0 24px rgba(212,146,74,0.45)'
-            : '0 0 24px rgba(196,104,58,0.45)',
+            ? '0 0 20px rgba(206,104,56,0.4)'
+            : '0 0 20px rgba(184,76,56,0.4)',
         }}
       >
         {isLeft ? '🎤' : '🎙️'}
@@ -143,12 +143,12 @@ function Debater({ side, delay }: { side: 'left' | 'right'; delay: number }) {
       {/* Speech bubble */}
       <div
         style={{
-          background: isLeft ? 'rgba(212,146,74,0.15)' : 'rgba(196,104,58,0.15)',
-          border: `1px solid ${isLeft ? 'rgba(212,146,74,0.35)' : 'rgba(196,104,58,0.35)'}`,
-          borderRadius: 10,
+          background: isLeft ? 'rgba(206,104,56,0.12)' : 'rgba(184,76,56,0.12)',
+          border: `1px solid ${isLeft ? 'rgba(206,104,56,0.3)' : 'rgba(184,76,56,0.3)'}`,
+          borderRadius: 8,
           padding: '3px 10px',
           fontSize: '0.7rem',
-          color: isLeft ? '#d4924a' : '#c4683a',
+          color: isLeft ? '#ce6838' : '#b84c38',
           letterSpacing: '0.04em',
         }}
       >
@@ -164,8 +164,8 @@ function VsBadge() {
       style={{
         fontSize: '1.35rem',
         fontWeight: 900,
-        color: '#f59e0b',
-        textShadow: '0 0 12px rgba(245,158,11,0.6)',
+        color: '#cc9428',
+        textShadow: '0 0 10px rgba(204,148,40,0.5)',
         opacity: 0,
         animation: 'vsFlash 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.08s forwards',
         letterSpacing: '-0.02em',

@@ -14,8 +14,8 @@ export default defineConfig({
         name: 'Vibe Debate',
         short_name: 'VibeDebate',
         description: 'AI-powered debate battles between friends',
-        theme_color: '#130b05',
-        background_color: '#130b05',
+        theme_color: '#0e0806',
+        background_color: '#0e0806',
         display: 'standalone',
         start_url: '/',
         icons: [

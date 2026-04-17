@@ -5,6 +5,7 @@ import Home from './pages/Home'
 import Session from './pages/Session'
 import Join from './pages/Join'
 import SplashScreen from './components/SplashScreen'
+import UpdateBanner from './components/UpdateBanner'
 
 function App() {
   const [showSplash, setShowSplash] = useState(true)
@@ -12,6 +13,7 @@ function App() {
   return (
     <>
       {showSplash && <SplashScreen onDone={() => setShowSplash(false)} />}
+      <UpdateBanner />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />

@@ -69,16 +69,30 @@ export const useSessionStore = create<SessionState>((set, get) => ({
     // Preserve existing playerSide if derivePlayerSide can't resolve it —
     // avoids nulling out a known side during transient Realtime race conditions.
     const resolvedSide = side ?? currentSide
-    set({ session, playerSide: resolvedSide })
+
+    // Guard against out-of-order Realtime events: if we already have
+    // debate_transcript or judgment, never discard them — a delayed earlier
+    // event (e.g. the 'debating' update that has no transcript yet) arriving
+    // after a later event (e.g. the 'judging' update that wrote the transcript)
+    // would otherwise blank the transcript mid-reveal.
+    const resolvedSession: Session = prev
+      ? {
+          ...session,
+          debate_transcript: session.debate_transcript ?? prev.debate_transcript,
+          judgment: session.judgment ?? prev.judgment,
+        }
+      : session
+
+    set({ session: resolvedSession, playerSide: resolvedSide })
 
     // Trigger debate only when we witness the transition to both-ready.
     // Requires prev !== null so a page refresh (prev = null) never re-triggers
     // a debate that's already running server-side.
     const bothJustReady =
       prev !== null &&
-      session.status === 'prompting' &&
-      session.player_a?.ready &&
-      session.player_b?.ready &&
+      resolvedSession.status === 'prompting' &&
+      resolvedSession.player_a?.ready &&
+      resolvedSession.player_b?.ready &&
       !(prev.player_a?.ready && prev.player_b?.ready)
 
     if (bothJustReady && resolvedSide === 'a') {
@@ -219,10 +233,11 @@ export const useSessionStore = create<SessionState>((set, get) => ({
 
     set({ loading: true, error: null })
 
-    // Reset status back to 'prompting' so the function will accept the request
+    // Reset to prompting and clear stale transcript/judgment so the merge
+    // logic in setSession doesn't carry old data into the new run.
     const { error } = await supabase
       .from('sessions')
-      .update({ status: 'prompting', error_message: null })
+      .update({ status: 'prompting', error_message: null, debate_transcript: null, judgment: null })
       .eq('id', session.id)
 
     if (error) {

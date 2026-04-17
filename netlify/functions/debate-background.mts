@@ -46,7 +46,7 @@ const DEBATE_SYSTEM = `You are a debate scriptwriter. You will receive a debate 
 
 Rules:
 - Each debater follows their strategist's brief as closely as possible.
-- Each turn MUST be very short: exactly 3–4 bullet points. No more. No prose paragraphs.
+- Each turn MUST be very short: exactly 2–3 bullet points. No more. No prose paragraphs.
 - Every bullet point should include a specific statistic, figure, study, or concrete data point where possible. Make the numbers real and plausible.
 - Rebuttals must directly counter specific numbers or claims the other side made — don't just pivot, challenge the data.
 - Keep language sharp and direct. No filler. No waffle.
@@ -57,21 +57,21 @@ Format your response EXACTLY like this, including the headers:
 
 ## Round 1: Opening Statements
 
-**FOR:** [3–4 bullet points with stats]
+**FOR:** [2–3 bullet points with stats]
 
-**AGAINST:** [3–4 bullet points with stats]
+**AGAINST:** [2–3 bullet points with stats]
 
 ## Round 2: Rebuttals
 
-**FOR:** [3–4 bullet points directly countering AGAINST's data]
+**FOR:** [2–3 bullet points directly countering AGAINST's data]
 
-**AGAINST:** [3–4 bullet points directly countering FOR's data]
+**AGAINST:** [2–3 bullet points directly countering FOR's data]
 
 ## Round 3: Closing Arguments
 
-**FOR:** [3–4 bullet points, strongest data first]
+**FOR:** [2–3 bullet points, strongest data first]
 
-**AGAINST:** [3–4 bullet points, strongest data first]`
+**AGAINST:** [2–3 bullet points, strongest data first]`
 
 const JUDGE_SYSTEM = `You are a thoughtful debate moderator. Your job is NOT to pick a winner — it is to find common ground and highlight the strongest contributions from each side.
 
@@ -167,7 +167,7 @@ export default async (req: Request) => {
   try {
     const debateMsg = await anthropic.messages.create({
       model: 'claude-sonnet-4-6',
-      max_tokens: 3000,
+      max_tokens: 1800,
       temperature: 0.9,
       system: DEBATE_SYSTEM,
       messages: [

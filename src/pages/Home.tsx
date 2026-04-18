@@ -52,7 +52,7 @@ export default function Home() {
           {/* Hero */}
           <div className="fade-up" style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 14, alignItems: 'center' }}>
             <h1 className="agora-display agora-display-lg" style={{ fontStyle: 'italic' }}>
-              Debate anything.
+              VibeDebate
             </h1>
           </div>
 

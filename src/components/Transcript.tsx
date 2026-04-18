@@ -3,7 +3,7 @@ import { parseTranscript } from '../lib/parseTranscript'
 
 interface Props {
   transcript: string
-  visibleTurns: number   // how many turns to show; Infinity = all
+  visibleTurns: number
   scrollToLatest?: boolean
 }
 
@@ -11,7 +11,6 @@ export default function Transcript({ transcript, visibleTurns, scrollToLatest }:
   const rounds = parseTranscript(transcript)
   const latestRef = useRef<HTMLDivElement>(null)
 
-  // Scroll to the latest turn whenever visibleTurns increases
   useEffect(() => {
     if (!scrollToLatest || !latestRef.current) return
     latestRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
@@ -19,68 +18,48 @@ export default function Transcript({ transcript, visibleTurns, scrollToLatest }:
 
   let turnIndex = 0
   let latestVisibleIndex = -1
-
-  // Figure out which is the last currently-visible turn
   rounds.forEach(round => {
     round.turns.forEach(() => {
       if (turnIndex < visibleTurns) latestVisibleIndex = turnIndex
       turnIndex++
     })
   })
-
   turnIndex = 0
 
   return (
-    <div className="w-full flex flex-col gap-8">
+    <div className="agora-thread">
       {rounds.map((round, ri) => {
         const firstTurnInRound = turnIndex
         const anyVisible = round.turns.some((_, ti) => firstTurnInRound + ti < visibleTurns)
         if (!anyVisible) { turnIndex += round.turns.length; return null }
 
         return (
-          <section key={ri}>
-            <h2 className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-4 text-center">
-              {round.title}
-            </h2>
-            <div className="flex flex-col gap-3">
-              {round.turns.map((turn, ti) => {
-                const idx = turnIndex++
-                const visible = idx < visibleTurns
-                const isLatest = idx === latestVisibleIndex
-                const isFor = turn.side === 'for'
-
-                return (
-                  <div
-                    key={ti}
-                    ref={isLatest ? latestRef : undefined}
-                    className={visible ? '' : 'h-0 overflow-hidden pointer-events-none'}
-                  >
-                    {visible && (
-                      <div className={`flex ${isFor ? 'justify-start' : 'justify-end'}`}>
-                        <div
-                          className={`max-w-[85%] rounded-xl px-5 py-4 ${
-                            isFor
-                              ? 'bg-purple-500 slide-from-left'
-                              : 'bg-gray-800 border border-gray-700 slide-from-right'
-                          }`}
-                        >
-                          <p className={`text-xs font-bold uppercase tracking-widest mb-2 ${
-                            isFor ? 'text-gray-900/70' : 'text-gray-500'
-                          }`}>
-                            {isFor ? 'FOR' : 'AGAINST'}
-                          </p>
-                          <p className={`text-sm leading-relaxed whitespace-pre-wrap ${
-                            isFor ? 'text-gray-900' : 'text-gray-200'
-                          }`}>
-                            {turn.text}
-                          </p>
-                        </div>
-                      </div>
-                    )}
+          <section key={ri} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <div className="agora-round-label">{round.title}</div>
+            {round.turns.map((turn, ti) => {
+              const idx = turnIndex++
+              const visible = idx < visibleTurns
+              const isLatest = idx === latestVisibleIndex
+              const isFor = turn.side === 'for'
+              if (!visible) return null
+              return (
+                <div
+                  key={ti}
+                  ref={isLatest ? latestRef : undefined}
+                  className={`agora-turn-row ${isFor ? 'for' : 'against'}`}
+                >
+                  <div className="agora-avatar" style={{ width: 34, height: 34, fontSize: 14, flexShrink: 0 }}>
+                    {isFor ? 'F' : 'A'}
                   </div>
-                )
-              })}
-            </div>
+                  <div className={`agora-turn-bubble ${isFor ? 'for slide-left' : 'against slide-right'}`}>
+                    <div className={`agora-turn-meta ${isFor ? 'for' : 'against'}`}>
+                      <span>{isFor ? 'FOR' : 'AGAINST'}</span>
+                    </div>
+                    <p style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{turn.text}</p>
+                  </div>
+                </div>
+              )
+            })}
           </section>
         )
       })}

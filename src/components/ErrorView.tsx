@@ -16,31 +16,37 @@ export default function ErrorView({ message, sessionId }: Props) {
   }
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-svh p-4 gap-6">
-      <div className="w-full max-w-sm bg-gray-900 border border-red-900/50 rounded-2xl p-6 text-center flex flex-col gap-4">
-        <div>
-          <p className="text-4xl mb-3">⚠️</p>
-          <h2 className="text-white font-bold text-lg mb-2">Something went wrong</h2>
-          <p className="text-gray-400 text-sm leading-relaxed">{message}</p>
-        </div>
-        <div className="flex flex-col gap-2">
-          {sessionId && (
-            <button
-              onClick={handleRetry}
-              disabled={loading}
-              className="w-full bg-red-800 hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-lg px-6 py-3 transition-colors"
-            >
-              {loading ? 'Retrying...' : 'Retry Debate'}
+    <div className="agora-stage">
+      <nav className="agora-topnav">
+        <span className="agora-brand">Agora</span>
+      </nav>
+      <main style={{ flex: 1, display: 'grid', placeItems: 'center', padding: 24 }}>
+        <div className="agora-card fade-up" style={{
+          maxWidth: 460, display: 'flex', flexDirection: 'column',
+          gap: 14, textAlign: 'center', borderLeft: '3px solid var(--oxblood)',
+        }}>
+          <span className="agora-eyebrow oxblood">A column has fallen</span>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 26, fontWeight: 500 }}>
+            Something broke in the stoa.
+          </h2>
+          <p style={{ fontFamily: 'var(--font-serif)', color: 'var(--fg2)', margin: 0, fontStyle: 'italic' }}>
+            {message}
+          </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 8 }}>
+            {sessionId && (
+              <button onClick={handleRetry} disabled={loading}
+                className="agora-btn agora-btn-primary agora-btn-block">
+                {loading ? 'Re-assembling…' : 'Re-assemble the debate'}
+              </button>
+            )}
+            <button onClick={() => navigate('/')}
+              className="agora-btn agora-btn-ghost agora-btn-sm agora-btn-block"
+              style={{ color: 'var(--fg3)' }}>
+              Return to the floor
             </button>
-          )}
-          <button
-            onClick={() => navigate('/')}
-            className="w-full text-gray-500 hover:text-gray-300 text-sm py-2 transition-colors"
-          >
-            Back to home
-          </button>
+          </div>
         </div>
-      </div>
-    </main>
+      </main>
+    </div>
   )
 }

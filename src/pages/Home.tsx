@@ -6,22 +6,19 @@ export default function Home() {
   const navigate = useNavigate()
   const { createSession, loading, error } = useSessionStore()
 
-  // Create form state
   const [title, setTitle] = useState('')
   const [name, setName] = useState('')
   const [timeLimit, setTimeLimit] = useState('300')
   const [createError, setCreateError] = useState('')
 
-  // Join form state
   const [joinCode, setJoinCode] = useState('')
   const [joinError, setJoinError] = useState('')
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault()
     setCreateError('')
-    if (!title.trim()) return setCreateError('Enter a debate topic.')
+    if (!title.trim()) return setCreateError('Enter a proposition to debate.')
     if (!name.trim()) return setCreateError('Enter your name.')
-
     try {
       const code = await createSession(title.trim(), name.trim(), {
         time_limit_seconds: parseInt(timeLimit) || 300,
@@ -36,122 +33,165 @@ export default function Home() {
     e.preventDefault()
     setJoinError('')
     const code = joinCode.trim().toUpperCase()
-    if (code.length !== 6) return setJoinError('Enter a 6-character code.')
+    if (code.length !== 6) return setJoinError('Enter a valid 6-character code.')
     navigate(`/join/${code}`)
   }
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-svh p-4 gap-8">
-      {/* Header */}
-      <div className="text-center animate-fadeUp" style={{ animationDelay: '0ms' }}>
-        <h1 className="text-5xl font-bold tracking-tight text-white mb-2">
-          Vibe<span className="animate-shimmer">Debate</span>
-        </h1>
-        <p className="text-gray-400">Intelligence-Assisted Consensus Discovery</p>
-      </div>
+    <div className="agora-stage">
+      <TopNav />
+      <main style={{
+        flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: '48px 20px 80px', position: 'relative',
+      }}>
+        {/* Column flourishes */}
+        <ColumnFlourish style={{ position: 'absolute', right: -40, top: 40, width: 180, height: 360, opacity: 0.06 }} />
+        <ColumnFlourish style={{ position: 'absolute', left: -40, bottom: 40, width: 180, height: 360, opacity: 0.06, transform: 'scaleX(-1)' }} />
 
-      <div className="w-full max-w-md flex flex-col gap-4">
-        {/* Start a Debate */}
-        <section
-          className="bg-gray-900 border border-gray-700 rounded-xl p-6 animate-fadeUp"
-          style={{ animationDelay: '120ms' }}
-        >
-          <h2 className="text-white font-semibold text-lg mb-4 flex items-center gap-2">
-            Start a Debate
-          </h2>
-          <form onSubmit={handleCreate} className="flex flex-col gap-3">
-            <div>
-              <label className="text-gray-400 text-sm mb-1 block">Debate topic</label>
+        <div style={{ width: '100%', maxWidth: 520, display: 'flex', flexDirection: 'column', gap: 36, position: 'relative' }}>
+          {/* Hero */}
+          <div className="fade-up" style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 14, alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <LaurelSvg size={34} color="var(--claude-clay)" />
+              <span className="agora-eyebrow clay">The stoa · est. MMXXVI</span>
+              <LaurelSvg size={34} color="var(--claude-clay)" />
+            </div>
+            <h1 className="agora-display agora-display-lg" style={{ fontStyle: 'italic' }}>
+              Pose the question.<br />Let others answer.
+            </h1>
+            <p style={{
+              fontFamily: 'var(--font-serif)', fontSize: 17, color: 'var(--fg2)',
+              maxWidth: 420, margin: 0, lineHeight: 1.6,
+            }}>
+              Agora pairs two participants with two AI proxies. You coach; they argue. The chair deliberates.
+            </p>
+          </div>
+
+          {/* Pose form */}
+          <form onSubmit={handleCreate} className="agora-card fade-up" style={{ display: 'flex', flexDirection: 'column', gap: 18, animationDelay: '100ms' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <span className="agora-eyebrow clay">Pose a proposition</span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--fg4)' }}>· You argue FOR</span>
+            </div>
+            <div className="agora-field">
+              <label className="agora-label">The proposition</label>
               <input
-                type="text"
-                value={title}
-                onChange={e => setTitle(e.target.value)}
-                placeholder="e.g. Pineapple belongs on pizza"
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all"
-                maxLength={120}
+                className="agora-input"
+                style={{ fontFamily: 'var(--font-serif)', fontSize: 17, padding: '14px 16px' }}
+                placeholder="e.g. Resolved: pineapple belongs on pizza."
+                value={title} onChange={e => setTitle(e.target.value)} maxLength={160}
               />
             </div>
-            <div>
-              <label className="text-gray-400 text-sm mb-1 block">Your name</label>
-              <input
-                type="text"
-                value={name}
-                onChange={e => setName(e.target.value)}
-                placeholder="You'll be arguing FOR"
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all"
-                maxLength={30}
-              />
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 190px', gap: 14 }}>
+              <div className="agora-field">
+                <label className="agora-label">Your name</label>
+                <input className="agora-input" placeholder="Who argues for the thesis"
+                  value={name} onChange={e => setName(e.target.value)} maxLength={30} />
+              </div>
+              <div className="agora-field">
+                <label className="agora-label">Brief length</label>
+                <select className="agora-select" value={timeLimit} onChange={e => setTimeLimit(e.target.value)}>
+                  <option value="60">1 minute</option>
+                  <option value="120">2 minutes</option>
+                  <option value="300">5 minutes</option>
+                  <option value="600">10 minutes</option>
+                  <option value="0">No limit</option>
+                </select>
+              </div>
             </div>
-            <div>
-              <label className="text-gray-400 text-sm mb-1 block">Brief time limit</label>
-              <select
-                value={timeLimit}
-                onChange={e => setTimeLimit(e.target.value)}
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all"
-              >
-                <option value="60">1 minute</option>
-                <option value="120">2 minutes</option>
-                <option value="300">5 minutes (default)</option>
-                <option value="600">10 minutes</option>
-                <option value="0">No limit</option>
-              </select>
-            </div>
-            {createError && (
-              <p className="text-red-400 text-sm">{createError}</p>
-            )}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-purple-600 hover:bg-purple-500 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-lg px-6 py-3 transition-all mt-1"
-            >
-              {loading ? 'Creating...' : 'Create Session'}
+            {createError && <p style={{ color: 'var(--oxblood)', fontSize: 13, margin: 0 }}>{createError}</p>}
+            <button type="submit" disabled={loading}
+              className="agora-btn agora-btn-primary agora-btn-lg agora-btn-block">
+              {loading ? 'Opening the floor…' : 'Take the floor →'}
             </button>
           </form>
-        </section>
 
-        {/* Divider */}
-        <div
-          className="flex items-center gap-4 animate-fadeUp"
-          style={{ animationDelay: '220ms' }}
-        >
-          <div className="flex-1 h-px bg-gray-800" />
-          <span className="text-gray-600 text-sm">or</span>
-          <div className="flex-1 h-px bg-gray-800" />
-        </div>
+          {/* Divider */}
+          <div className="fade-up" style={{ display: 'flex', alignItems: 'center', gap: 14, color: 'var(--fg4)', animationDelay: '160ms' }}>
+            <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.2em' }}>OR</span>
+            <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
+          </div>
 
-        {/* Join a Debate */}
-        <section
-          className="bg-gray-900 border border-gray-700 rounded-xl p-6 animate-fadeUp"
-          style={{ animationDelay: '300ms' }}
-        >
-          <h2 className="text-white font-semibold text-lg mb-4 flex items-center gap-2">
-            Join a Debate
-          </h2>
-          <form onSubmit={handleJoin} className="flex flex-col gap-3">
-            <div>
-              <label className="text-gray-400 text-sm mb-1 block">Session code</label>
+          {/* Join form */}
+          <form onSubmit={handleJoin} className="agora-card-sunken fade-up" style={{ display: 'flex', flexDirection: 'column', gap: 14, animationDelay: '220ms' }}>
+            <span className="agora-eyebrow">Enter the stoa</span>
+            <div className="agora-field">
+              <label className="agora-label">Session code</label>
               <input
-                type="text"
-                value={joinCode}
-                onChange={e => setJoinCode(e.target.value.toUpperCase().slice(0, 6))}
+                className="agora-input"
                 placeholder="ABCDEF"
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-600 font-mono text-xl tracking-widest text-center focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all"
-                maxLength={6}
-                autoComplete="off"
+                value={joinCode}
+                onChange={e => setJoinCode(e.target.value.toUpperCase().slice(0, 8))}
+                style={{ fontFamily: 'var(--font-mono)', fontSize: 22, textAlign: 'center', letterSpacing: '0.3em', padding: '14px 16px' }}
+                maxLength={8} autoComplete="off"
               />
             </div>
-            {joinError && (
-              <p className="text-red-400 text-sm">{joinError}</p>
-            )}
-            <button
-              type="submit"
-              className="w-full bg-gray-800 hover:bg-gray-700 active:scale-95 border border-gray-700 text-white font-semibold rounded-lg px-6 py-3 transition-all"
-            >
-              Join Session
+            {joinError && <p style={{ color: 'var(--oxblood)', fontSize: 13, margin: 0 }}>{joinError}</p>}
+            <button type="submit" className="agora-btn agora-btn-secondary agora-btn-block">
+              Join the debate
             </button>
           </form>
-        </section>
+
+          <p className="fade-up" style={{
+            textAlign: 'center', fontFamily: 'var(--font-serif)', fontSize: 13,
+            color: 'var(--fg4)', fontStyle: 'italic', margin: 0, animationDelay: '300ms',
+          }}>
+            "The unexamined life is not worth living." — Socrates
+          </p>
+        </div>
+      </main>
+    </div>
+  )
+}
+
+function TopNav() {
+  return (
+    <nav className="agora-topnav">
+      <span className="agora-brand">Agora</span>
+      <div className="agora-navlinks">
+        <a className="agora-navlink active">The floor</a>
+        <a className="agora-navlink">Symposium</a>
+        <a className="agora-navlink">Stoa</a>
       </div>
-    </main>
+      <div style={{ flex: 1 }} />
+    </nav>
+  )
+}
+
+function LaurelSvg({ size = 44, color = 'var(--gold)' }: { size?: number; color?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" fill="none"
+      stroke={color} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M32 54 C 22 54 14 46 14 34 C 14 24 20 18 28 18" />
+      <path d="M32 54 C 42 54 50 46 50 34 C 50 24 44 18 36 18" />
+      {[0,1,2,3,4].map(i => {
+        const y = 22 + i * 6
+        return <g key={i}>
+          <path d={`M ${16+i} ${y} q -4 -2 -6 2 q 3 4 7 1`} />
+          <path d={`M ${48-i} ${y} q 4 -2 6 2 q -3 4 -7 1`} />
+        </g>
+      })}
+      <path d="M32 18 L32 12" />
+      <circle cx="32" cy="10" r="1.5" fill={color} />
+    </svg>
+  )
+}
+
+function ColumnFlourish({ style }: { style?: React.CSSProperties }) {
+  return (
+    <svg viewBox="0 0 120 400" style={{ ...style, pointerEvents: 'none' }}
+      fill="none" stroke="var(--ink-00)" strokeWidth="1">
+      <rect x="10" y="6" width="100" height="14" />
+      <rect x="16" y="20" width="88" height="10" />
+      <path d="M20 30 Q 40 44 60 30 Q 80 44 100 30" />
+      <line x1="28" y1="40" x2="28" y2="370" />
+      <line x1="44" y1="40" x2="44" y2="370" />
+      <line x1="60" y1="40" x2="60" y2="370" />
+      <line x1="76" y1="40" x2="76" y2="370" />
+      <line x1="92" y1="40" x2="92" y2="370" />
+      <rect x="16" y="370" width="88" height="10" />
+      <rect x="10" y="380" width="100" height="14" />
+    </svg>
   )
 }

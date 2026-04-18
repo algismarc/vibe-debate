@@ -28,101 +28,105 @@ export default function Lobby({ session }: Props) {
   }
 
   async function handleCancel() {
-    if (!confirm('Cancel this session? Your opponent\'s link will stop working.')) return
+    if (!confirm('Withdraw this proposition? Your opponent\'s link will stop working.')) return
     setCancelling(true)
     await cancelSession()
     navigate('/')
   }
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-svh p-4 gap-8">
-      {/* Topic */}
-      <div
-        className="text-center max-w-lg px-2 animate-fadeUp"
-        style={{ animationDelay: '0ms' }}
-      >
-        <p className="text-gray-500 text-xs uppercase tracking-widest mb-2">Debate Topic</p>
-        <h1 className="text-2xl sm:text-3xl font-bold text-white leading-tight">
-          "{session.title}"
-        </h1>
-      </div>
+    <div className="agora-stage">
+      <nav className="agora-topnav">
+        <span className="agora-brand">Agora</span>
+        <div style={{ flex: 1 }} />
+        <span className="agora-session-code">
+          <span style={{ opacity: 0.5 }}>#</span>{session.join_code}
+        </span>
+      </nav>
 
-      {/* Join code card */}
-      <div
-        className="w-full max-w-sm bg-gray-900 border border-gray-800 rounded-2xl p-6 flex flex-col items-center gap-4 animate-fadeUp"
-        style={{ animationDelay: '100ms' }}
-      >
-        <p className="text-gray-500 text-sm">Share this code with your opponent</p>
+      <main style={{
+        flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center',
+        padding: '48px 20px 80px', gap: 28,
+      }}>
+        {/* Topic */}
+        <div className="fade-up" style={{ textAlign: 'center', maxWidth: 600 }}>
+          <span className="agora-eyebrow clay">The floor is open</span>
+          <h1 className="agora-display agora-display-md" style={{ marginTop: 10, fontStyle: 'italic' }}>
+            "{session.title}"
+          </h1>
+        </div>
 
-        <button
-          onClick={copyCode}
-          className="font-mono text-4xl sm:text-5xl font-bold tracking-[0.2em] text-purple-400 hover:text-purple-300 active:scale-95 transition-all cursor-pointer animate-codeGlow rounded-lg px-2"
-          title="Click to copy code"
-        >
-          {session.join_code}
-        </button>
-
-        <div className="flex gap-2 w-full">
-          <button
-            onClick={copyCode}
-            className="flex-1 flex items-center justify-center gap-1.5 bg-gray-800 hover:bg-gray-700 active:scale-95 border border-gray-700 text-white text-sm font-medium rounded-lg px-3 py-2 transition-all"
-          >
-            {codeCopied ? 'Copied!' : 'Copy code'}
+        {/* Join code card */}
+        <div className="agora-card fade-up" style={{
+          width: '100%', maxWidth: 400,
+          display: 'flex', flexDirection: 'column', gap: 14, alignItems: 'center', textAlign: 'center',
+          animationDelay: '100ms',
+        }}>
+          <span className="agora-eyebrow">Share this code with your opponent</span>
+          <button className="agora-joincode" onClick={copyCode} title="Click to copy">
+            {session.join_code}
           </button>
+          <div style={{ display: 'flex', gap: 8, width: '100%' }}>
+            <button onClick={copyCode} className="agora-btn agora-btn-ghost agora-btn-sm" style={{ flex: 1 }}>
+              {codeCopied ? '✓ Copied' : 'Copy code'}
+            </button>
+            <button onClick={copyLink} className="agora-btn agora-btn-ghost agora-btn-sm" style={{ flex: 1 }}>
+              {linkCopied ? '✓ Copied' : 'Copy link'}
+            </button>
+          </div>
+        </div>
+
+        {/* Player slots */}
+        <div className="fade-up" style={{
+          width: '100%', maxWidth: 400,
+          display: 'flex', flexDirection: 'column', gap: 10,
+          animationDelay: '180ms',
+        }}>
+          <span className="agora-eyebrow" style={{ textAlign: 'center' }}>Participants</span>
+
+          {/* Player A (host) */}
+          <div className="agora-card" style={{ padding: 14, display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div className="agora-avatar">{session.player_a.name[0].toUpperCase()}</div>
+            <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.3 }}>
+              <span style={{ fontWeight: 600, fontSize: 14 }}>{session.player_a.name}</span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--fg4)' }}>arguing FOR</span>
+            </div>
+            <div style={{ marginLeft: 'auto' }}>
+              <span className="agora-chip agora-chip-laurel"><span className="dot" />Present</span>
+            </div>
+          </div>
+
+          {/* Player B (waiting) */}
+          <div style={{
+            padding: 14, background: 'transparent',
+            border: '1px dashed var(--border-strong)', borderRadius: 12,
+            display: 'flex', alignItems: 'center', gap: 12,
+          }}>
+            <div className="agora-avatar" style={{ background: 'transparent', color: 'var(--fg4)', border: '1px dashed var(--border-strong)' }}>?</div>
+            <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.3 }}>
+              <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', color: 'var(--fg3)', fontSize: 15 }}>
+                Waiting for opponent…
+              </span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--fg4)' }}>will argue AGAINST</span>
+            </div>
+            <div style={{ marginLeft: 'auto' }}>
+              <span className="agora-pulse-dots"><span /><span /><span /></span>
+            </div>
+          </div>
+        </div>
+
+        {/* Cancel — host only */}
+        {playerSide === 'a' && (
           <button
-            onClick={copyLink}
-            className="flex-1 flex items-center justify-center gap-1.5 bg-gray-800 hover:bg-gray-700 active:scale-95 border border-gray-700 text-white text-sm font-medium rounded-lg px-3 py-2 transition-all"
+            onClick={handleCancel}
+            disabled={cancelling}
+            className="agora-btn agora-btn-ghost agora-btn-sm fade-up"
+            style={{ animationDelay: '260ms', color: 'var(--fg3)' }}
           >
-            {linkCopied ? 'Copied!' : 'Copy link'}
+            {cancelling ? 'Withdrawing…' : 'Withdraw the proposition'}
           </button>
-        </div>
-      </div>
-
-      {/* Player slots */}
-      <div
-        className="w-full max-w-sm flex flex-col gap-3 animate-fadeUp"
-        style={{ animationDelay: '200ms' }}
-      >
-        <p className="text-gray-500 text-xs uppercase tracking-widest text-center">Players</p>
-
-        <div className="flex items-center gap-3 bg-gray-900 border border-gray-800 rounded-xl px-4 py-3">
-          <span className="text-xs font-bold text-purple-400 bg-purple-400/10 rounded px-2 py-0.5 shrink-0">FOR</span>
-          <span className="text-white font-medium truncate">{session.player_a.name}</span>
-          <span className="ml-auto text-green-400 text-xs shrink-0">Ready</span>
-        </div>
-
-        <div className="flex items-center gap-3 bg-gray-900 border border-gray-800 border-dashed rounded-xl px-4 py-3">
-          <span className="text-xs font-bold text-green-400 bg-green-400/10 rounded px-2 py-0.5 shrink-0">AGAINST</span>
-          <span className="text-gray-600 font-medium italic truncate">Waiting for opponent...</span>
-          <span className="ml-auto shrink-0"><WaitingDots /></span>
-        </div>
-      </div>
-
-      {/* Cancel — host only */}
-      {playerSide === 'a' && (
-        <button
-          onClick={handleCancel}
-          disabled={cancelling}
-          className="text-gray-700 hover:text-red-400 text-sm transition-colors disabled:opacity-50 animate-fadeUp"
-          style={{ animationDelay: '300ms' }}
-        >
-          {cancelling ? 'Cancelling...' : 'Cancel session'}
-        </button>
-      )}
-    </main>
-  )
-}
-
-function WaitingDots() {
-  return (
-    <span className="flex gap-1">
-      {[0, 1, 2].map(i => (
-        <span
-          key={i}
-          className="w-1.5 h-1.5 rounded-full bg-gray-600 animate-pulse"
-          style={{ animationDelay: `${i * 0.2}s` }}
-        />
-      ))}
-    </span>
+        )}
+      </main>
+    </div>
   )
 }

@@ -21,7 +21,6 @@ export default function Join() {
     e.preventDefault()
     setFormError('')
     if (!name.trim()) return setFormError('Enter your name.')
-
     try {
       await joinSession(joinCode!, name.trim())
       navigate(`/session/${joinCode}`)
@@ -38,21 +37,27 @@ export default function Join() {
   // Session not found
   if (!loading && error && !session) {
     return (
-      <main className="flex flex-col items-center justify-center min-h-svh p-4">
-        <div className="w-full max-w-sm text-center flex flex-col gap-4">
-          <p className="text-4xl">🔍</p>
-          <h2 className="text-white font-bold text-xl">Session not found</h2>
-          <p className="text-gray-500 text-sm">
-            The code <span className="font-mono text-gray-300">{joinCode}</span> doesn't match any active session.
-          </p>
-          <button
-            onClick={() => navigate('/')}
-            className="w-full bg-gray-800 hover:bg-gray-700 border border-gray-700 text-white font-semibold rounded-xl px-6 py-3 transition-colors"
-          >
-            Back to home
-          </button>
-        </div>
-      </main>
+      <div className="agora-stage">
+        <SessionTopNav code={joinCode} />
+        <main style={{ flex: 1, display: 'grid', placeItems: 'center', padding: 24 }}>
+          <div className="agora-card fade-up" style={{
+            maxWidth: 420, textAlign: 'center',
+            display: 'flex', flexDirection: 'column', gap: 14,
+            borderLeft: '3px solid var(--oxblood)',
+          }}>
+            <span className="agora-eyebrow oxblood">A column has fallen</span>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 500 }}>
+              Session not found.
+            </h2>
+            <p style={{ fontFamily: 'var(--font-serif)', color: 'var(--fg2)', margin: 0 }}>
+              The code <span style={{ fontFamily: 'var(--font-mono)', color: 'var(--ink-00)' }}>{joinCode}</span> doesn't match any open session. It may have been withdrawn.
+            </p>
+            <button onClick={() => navigate('/')} className="agora-btn agora-btn-secondary agora-btn-block">
+              Return to the floor
+            </button>
+          </div>
+        </main>
+      </div>
     )
   }
 
@@ -60,105 +65,120 @@ export default function Join() {
   if (sessionLoaded && status && status !== 'waiting') {
     const isComplete = status === 'complete'
     return (
-      <main className="flex flex-col items-center justify-center min-h-svh p-4">
-        <div className="w-full max-w-sm text-center flex flex-col gap-5">
-          <div>
-            <h2 className="text-white font-bold text-xl mb-1">
-              {isComplete ? 'Debate complete' : 'Debate in progress'}
+      <div className="agora-stage">
+        <SessionTopNav code={joinCode} />
+        <main style={{ flex: 1, display: 'grid', placeItems: 'center', padding: 24 }}>
+          <div className="agora-card fade-up" style={{
+            maxWidth: 460, textAlign: 'center',
+            display: 'flex', flexDirection: 'column', gap: 16,
+          }}>
+            <span className={`agora-eyebrow ${isComplete ? 'laurel' : 'clay'}`}>
+              {isComplete ? 'Debate concluded' : 'Debate underway'}
+            </span>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 26, fontWeight: 500 }}>
+              {isComplete ? 'The laurels have been awarded.' : 'The floor is closed to late arrivals.'}
             </h2>
-            <p className="text-gray-500 text-sm">
+            <p style={{ fontFamily: 'var(--font-serif)', color: 'var(--fg2)', margin: 0 }}>
               {isComplete
-                ? 'This debate has finished. View the results below.'
-                : 'This debate has already started — you can\'t join, but you can watch.'}
+                ? 'You may still read the transcript and the chair\'s reckoning.'
+                : 'You can observe the debate from the gallery.'}
             </p>
+            {topic && (
+              <div className="agora-card-sunken" style={{ padding: 14 }}>
+                <span className="agora-eyebrow">Proposition</span>
+                <p style={{ fontFamily: 'var(--font-serif)', fontSize: 17, color: 'var(--fg1)', margin: '6px 0 0', fontStyle: 'italic' }}>
+                  "{topic}"
+                </p>
+              </div>
+            )}
+            <button onClick={() => navigate(`/session/${joinCode}`)}
+              className="agora-btn agora-btn-primary agora-btn-block">
+              {isComplete ? 'Read the verdict →' : 'Watch from the gallery →'}
+            </button>
+            <button onClick={() => navigate('/')}
+              style={{ fontSize: 13, color: 'var(--fg3)', background: 'none', border: 'none', cursor: 'pointer' }}>
+              Back to the floor
+            </button>
           </div>
-          {topic && (
-            <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
-              <p className="text-gray-500 text-xs uppercase tracking-widest mb-1">Topic</p>
-              <p className="text-white font-semibold">"{topic}"</p>
-            </div>
-          )}
-          <button
-            onClick={() => navigate(`/session/${joinCode}`)}
-            className="w-full bg-purple-600 hover:bg-purple-500 text-white font-semibold rounded-xl px-6 py-3 transition-colors"
-          >
-            {isComplete ? 'View results' : 'Watch debate'}
-          </button>
-          <button
-            onClick={() => navigate('/')}
-            className="text-gray-600 hover:text-gray-400 text-sm transition-colors"
-          >
-Back to home
-          </button>
-        </div>
-      </main>
+        </main>
+      </div>
     )
   }
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-svh p-4">
-      <div className="w-full max-w-sm flex flex-col gap-5">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-white mb-1">
-            Vibe<span className="text-purple-400">Debate</span>
-          </h1>
-          <p className="text-gray-500 text-sm">You've been challenged to a debate</p>
-        </div>
+    <div className="agora-stage">
+      <SessionTopNav code={joinCode} />
+      <main style={{ flex: 1, display: 'grid', placeItems: 'center', padding: '40px 20px 80px' }}>
+        <div style={{ width: '100%', maxWidth: 480, display: 'flex', flexDirection: 'column', gap: 22 }}>
+          <div className="fade-up" style={{ textAlign: 'center' }}>
+            <span className="agora-eyebrow clay">You have been called to the stoa</span>
+            <h1 className="agora-display agora-display-md" style={{ marginTop: 10, fontStyle: 'italic' }}>
+              The floor awaits your answer.
+            </h1>
+          </div>
 
-        {/* Topic card */}
-        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5 text-center">
-          <p className="text-gray-500 text-xs uppercase tracking-widest mb-2">Debate Topic</p>
-          {loading && !topic ? (
-            <div className="flex justify-center gap-1.5 py-2">
-              {[0, 1, 2].map(i => (
-                <span
-                  key={i}
-                  className="w-1.5 h-1.5 rounded-full bg-gray-700 animate-pulse"
-                  style={{ animationDelay: `${i * 0.2}s` }}
-                />
-              ))}
+          {/* Proposition card */}
+          <div className="agora-card fade-up" style={{
+            textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 14,
+            position: 'relative', overflow: 'hidden', animationDelay: '80ms',
+          }}>
+            <div style={{
+              position: 'absolute', right: 14, top: 4,
+              fontFamily: 'var(--font-display)', fontSize: 96,
+              color: 'var(--claude-clay-wash)', lineHeight: 1, fontWeight: 400,
+              pointerEvents: 'none',
+            }}>§</div>
+            <span className="agora-eyebrow clay">The proposition</span>
+            {loading && !topic ? (
+              <div className="agora-pulse-dots" style={{ justifyContent: 'center' }}>
+                <span /><span /><span />
+              </div>
+            ) : (
+              <p style={{ fontFamily: 'var(--font-serif)', fontSize: 22, color: 'var(--fg1)', margin: 0, lineHeight: 1.35, fontStyle: 'italic', position: 'relative' }}>
+                "{topic}"
+              </p>
+            )}
+            <div style={{ display: 'flex', justifyContent: 'center', gap: 10, alignItems: 'center', marginTop: 4 }}>
+              <span className="agora-chip agora-chip-oxblood">
+                <span className="dot" />You · Against
+              </span>
             </div>
-          ) : (
-            <p className="text-white font-bold text-xl leading-snug">"{topic}"</p>
-          )}
-          <p className="text-green-400 text-xs font-semibold uppercase tracking-widest mt-3">
-            You'll be arguing AGAINST
-          </p>
-        </div>
+          </div>
 
-        {/* Join form */}
-        <section className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
-          <form onSubmit={handleJoin} className="flex flex-col gap-3">
-            <div>
-              <label className="text-gray-400 text-sm mb-1 block">Your name</label>
-              <input
-                type="text"
-                value={name}
-                onChange={e => setName(e.target.value)}
-                placeholder="Enter your name"
-                autoFocus
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-green-500 transition-colors"
-                maxLength={30}
-              />
+          {/* Join form */}
+          <form onSubmit={handleJoin} className="agora-card fade-up" style={{ display: 'flex', flexDirection: 'column', gap: 14, animationDelay: '160ms' }}>
+            <div className="agora-field">
+              <label className="agora-label">Your name</label>
+              <input className="agora-input" placeholder="How shall we address you?"
+                value={name} onChange={e => setName(e.target.value)} maxLength={30} autoFocus />
             </div>
-            {formError && <p className="text-red-400 text-sm">{formError}</p>}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-green-700 hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-lg px-6 py-3 transition-colors"
-            >
-              {loading ? 'Joining...' : "Let's Debate"}
+            {formError && <p style={{ color: 'var(--oxblood)', fontSize: 13, margin: 0 }}>{formError}</p>}
+            <button type="submit" disabled={loading}
+              className="agora-btn agora-btn-primary agora-btn-lg agora-btn-block">
+              {loading ? 'Joining…' : 'Accept the challenge →'}
             </button>
           </form>
-        </section>
 
-        <button
-          onClick={() => navigate('/')}
-          className="text-gray-600 hover:text-gray-400 text-sm transition-colors text-center"
-        >
-          Back to home
-        </button>
-      </div>
-    </main>
+          <button onClick={() => navigate('/')}
+            style={{ fontSize: 13, color: 'var(--fg3)', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'center' }}>
+            Back to the floor
+          </button>
+        </div>
+      </main>
+    </div>
+  )
+}
+
+function SessionTopNav({ code }: { code?: string }) {
+  return (
+    <nav className="agora-topnav">
+      <span className="agora-brand">Agora</span>
+      <div style={{ flex: 1 }} />
+      {code && (
+        <span className="agora-session-code">
+          <span style={{ opacity: 0.5 }}>#</span>{code}
+        </span>
+      )}
+    </nav>
   )
 }

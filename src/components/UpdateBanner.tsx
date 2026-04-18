@@ -20,7 +20,7 @@ export default function UpdateBanner() {
 
   return (
     <div className="agora-update-banner">
-      <span style={{ color: 'var(--fg2)' }}>A new edition is available.</span>
+      <span style={{ color: 'var(--fg2)' }}>Update available</span>
       <button onClick={handleUpdate} className="agora-btn agora-btn-primary agora-btn-sm">
         Update
       </button>

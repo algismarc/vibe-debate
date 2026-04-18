@@ -51,41 +51,26 @@ export default function Home() {
         <div style={{ width: '100%', maxWidth: 520, display: 'flex', flexDirection: 'column', gap: 36, position: 'relative' }}>
           {/* Hero */}
           <div className="fade-up" style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 14, alignItems: 'center' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <LaurelSvg size={34} color="var(--claude-clay)" />
-              <span className="agora-eyebrow clay">The stoa · est. MMXXVI</span>
-              <LaurelSvg size={34} color="var(--claude-clay)" />
-            </div>
             <h1 className="agora-display agora-display-lg" style={{ fontStyle: 'italic' }}>
-              Pose the question.<br />Let others answer.
+              Debate anything.
             </h1>
-            <p style={{
-              fontFamily: 'var(--font-serif)', fontSize: 17, color: 'var(--fg2)',
-              maxWidth: 420, margin: 0, lineHeight: 1.6,
-            }}>
-              Agora pairs two participants with two AI proxies. You coach; they argue. The chair deliberates.
-            </p>
           </div>
 
           {/* Pose form */}
           <form onSubmit={handleCreate} className="agora-card fade-up" style={{ display: 'flex', flexDirection: 'column', gap: 18, animationDelay: '100ms' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <span className="agora-eyebrow clay">Pose a proposition</span>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--fg4)' }}>· You argue FOR</span>
-            </div>
             <div className="agora-field">
-              <label className="agora-label">The proposition</label>
+              <label className="agora-label">Topic <span style={{ fontWeight: 400, textTransform: 'none', letterSpacing: 0, color: 'var(--fg4)', fontSize: 12 }}>— you argue for</span></label>
               <input
                 className="agora-input"
                 style={{ fontFamily: 'var(--font-serif)', fontSize: 17, padding: '14px 16px' }}
-                placeholder="e.g. Resolved: pineapple belongs on pizza."
+                placeholder="e.g. Pineapple belongs on pizza."
                 value={title} onChange={e => setTitle(e.target.value)} maxLength={160}
               />
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 190px', gap: 14 }}>
               <div className="agora-field">
                 <label className="agora-label">Your name</label>
-                <input className="agora-input" placeholder="Who argues for the thesis"
+                <input className="agora-input" placeholder="Name"
                   value={name} onChange={e => setName(e.target.value)} maxLength={30} />
               </div>
               <div className="agora-field">
@@ -102,7 +87,7 @@ export default function Home() {
             {createError && <p style={{ color: 'var(--oxblood)', fontSize: 13, margin: 0 }}>{createError}</p>}
             <button type="submit" disabled={loading}
               className="agora-btn agora-btn-primary agora-btn-lg agora-btn-block">
-              {loading ? 'Opening the floor…' : 'Take the floor →'}
+              {loading ? 'Creating…' : 'Start debate →'}
             </button>
           </form>
 
@@ -115,9 +100,8 @@ export default function Home() {
 
           {/* Join form */}
           <form onSubmit={handleJoin} className="agora-card-sunken fade-up" style={{ display: 'flex', flexDirection: 'column', gap: 14, animationDelay: '220ms' }}>
-            <span className="agora-eyebrow">Enter the stoa</span>
             <div className="agora-field">
-              <label className="agora-label">Session code</label>
+              <label className="agora-label">Join code</label>
               <input
                 className="agora-input"
                 placeholder="ABCDEF"
@@ -129,16 +113,9 @@ export default function Home() {
             </div>
             {joinError && <p style={{ color: 'var(--oxblood)', fontSize: 13, margin: 0 }}>{joinError}</p>}
             <button type="submit" className="agora-btn agora-btn-secondary agora-btn-block">
-              Join the debate
+              Join
             </button>
           </form>
-
-          <p className="fade-up" style={{
-            textAlign: 'center', fontFamily: 'var(--font-serif)', fontSize: 13,
-            color: 'var(--fg4)', fontStyle: 'italic', margin: 0, animationDelay: '300ms',
-          }}>
-            "The unexamined life is not worth living." — Socrates
-          </p>
         </div>
       </main>
     </div>
@@ -148,13 +125,7 @@ export default function Home() {
 function TopNav() {
   return (
     <nav className="agora-topnav">
-      <span className="agora-brand">Agora</span>
-      <div className="agora-navlinks">
-        <a className="agora-navlink active">The floor</a>
-        <a className="agora-navlink">Symposium</a>
-        <a className="agora-navlink">Stoa</a>
-      </div>
-      <div style={{ flex: 1 }} />
+      <span className="agora-brand">Vibeum Debatum</span>
     </nav>
   )
 }

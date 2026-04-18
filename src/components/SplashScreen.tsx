@@ -39,13 +39,13 @@ export default function SplashScreen({ onDone }: Props) {
           fontFamily: 'var(--font-display)', fontSize: 40, fontWeight: 500,
           color: 'var(--marble-00)', letterSpacing: '-0.02em',
         }}>
-          Agora
+          Vibeum Debatum
         </div>
         <div style={{
           marginTop: 10, fontFamily: 'var(--font-serif)', fontSize: 17,
           fontStyle: 'italic', color: 'var(--marble-20)', fontWeight: 400,
         }}>
-          Where arguments are sharpened in the open.
+          Intelligence-Assisted Consensus Discovery
         </div>
       </div>
     </div>

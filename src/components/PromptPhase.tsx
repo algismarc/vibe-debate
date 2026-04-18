@@ -74,7 +74,7 @@ export default function PromptPhase({ session }: Props) {
     return (
       <div className="agora-stage">
         <nav className="agora-topnav">
-          <span className="agora-brand">Agora</span>
+          <span className="agora-brand">Vibeum Debatum</span>
           <div style={{ flex: 1 }} />
           <span className="agora-session-code"><span style={{ opacity: 0.5 }}>#</span>{session.join_code}</span>
         </nav>
@@ -88,9 +88,9 @@ export default function PromptPhase({ session }: Props) {
               <span style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontStyle: 'italic', color: 'var(--fg3)' }}>vs.</span>
               <BustSmall facing="left" variant="helmeted" />
             </div>
-            <h2 className="agora-display agora-display-sm" style={{ fontStyle: 'italic' }}>Summoning the debaters…</h2>
+            <h2 className="agora-display agora-display-sm" style={{ fontStyle: 'italic' }}>Starting…</h2>
             <p style={{ fontFamily: 'var(--font-serif)', color: 'var(--fg2)', margin: 0 }}>
-              Both briefs are lodged. The proxies are being instructed.
+              Both players ready. Generating the debate.
             </p>
             <span className="agora-dots"><span /><span /><span /></span>
           </div>
@@ -102,7 +102,7 @@ export default function PromptPhase({ session }: Props) {
   return (
     <div className="agora-stage">
       <nav className="agora-topnav">
-        <span className="agora-brand">Agora</span>
+        <span className="agora-brand">Vibeum Debatum</span>
         <div style={{ flex: 1 }} />
         <span className="agora-session-code"><span style={{ opacity: 0.5 }}>#</span>{session.join_code}</span>
       </nav>
@@ -113,7 +113,7 @@ export default function PromptPhase({ session }: Props) {
       }}>
         {/* Topic + side */}
         <div className="fade-up" style={{ textAlign: 'center', width: '100%' }}>
-          <span className="agora-eyebrow">The proposition</span>
+          <span className="agora-eyebrow">Topic</span>
           <h1 style={{
             fontFamily: 'var(--font-display)', fontSize: 'var(--fs-xl)', fontWeight: 500,
             fontStyle: 'italic', marginTop: 8, lineHeight: 1.3,
@@ -135,8 +135,7 @@ export default function PromptPhase({ session }: Props) {
         {/* Tone selector */}
         <div className="fade-up" style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 10, animationDelay: '120ms' }}>
           <div>
-            <span className="agora-label">Rhetorical register</span>
-            <span style={{ fontFamily: 'var(--font-sans)', fontSize: 12, color: 'var(--fg3)', marginLeft: 8 }}>— how should your proxy argue?</span>
+            <span className="agora-label">Style</span>
           </div>
           <div className="agora-tone-grid">
             {TONES.map(t => {
@@ -160,8 +159,7 @@ export default function PromptPhase({ session }: Props) {
         {/* Brief textarea */}
         <div className="fade-up" style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 8, animationDelay: '180ms' }}>
           <div>
-            <span className="agora-label">Strategy brief</span>
-            <span style={{ fontFamily: 'var(--font-sans)', fontSize: 12, color: 'var(--fg3)', marginLeft: 8 }}>— private coaching for your proxy</span>
+            <span className="agora-label">Brief <span style={{ fontWeight: 400, textTransform: 'none', letterSpacing: 0, fontSize: 12, color: 'var(--fg4)' }}>— optional</span></span>
           </div>
           {submitted ? (
             <div style={{
@@ -198,13 +196,13 @@ export default function PromptPhase({ session }: Props) {
           {!submitted ? (
             <button onClick={handleSubmit} disabled={submitting || overLimit}
               className="agora-btn agora-btn-primary agora-btn-lg agora-btn-block">
-              {submitting ? 'Lodging brief…' : 'Lodge brief — Ready to debate'}
+              {submitting ? 'Submitting…' : 'Submit brief'}
             </button>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
               <span className="agora-chip agora-chip-laurel">
                 <span className="dot" />
-                Brief lodged{tone ? ` · ${TONES.find(t => t.id === tone)?.label}` : ''}
+                Ready{tone ? ` · ${TONES.find(t => t.id === tone)?.label}` : ''}
               </span>
               <OpponentStatus name={opponentPlayer?.name ?? 'Opponent'} ready={opponentReady} />
             </div>

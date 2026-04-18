@@ -45,15 +45,14 @@ export default function Join() {
             display: 'flex', flexDirection: 'column', gap: 14,
             borderLeft: '3px solid var(--oxblood)',
           }}>
-            <span className="agora-eyebrow oxblood">A column has fallen</span>
             <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 500 }}>
               Session not found.
             </h2>
             <p style={{ fontFamily: 'var(--font-serif)', color: 'var(--fg2)', margin: 0 }}>
-              The code <span style={{ fontFamily: 'var(--font-mono)', color: 'var(--ink-00)' }}>{joinCode}</span> doesn't match any open session. It may have been withdrawn.
+              <span style={{ fontFamily: 'var(--font-mono)', color: 'var(--ink-00)' }}>{joinCode}</span> doesn't match any active session.
             </p>
             <button onClick={() => navigate('/')} className="agora-btn agora-btn-secondary agora-btn-block">
-              Return to the floor
+              Back
             </button>
           </div>
         </main>
@@ -76,12 +75,10 @@ export default function Join() {
               {isComplete ? 'Debate concluded' : 'Debate underway'}
             </span>
             <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 26, fontWeight: 500 }}>
-              {isComplete ? 'The laurels have been awarded.' : 'The floor is closed to late arrivals.'}
+              {isComplete ? 'Debate finished.' : 'Debate in progress.'}
             </h2>
             <p style={{ fontFamily: 'var(--font-serif)', color: 'var(--fg2)', margin: 0 }}>
-              {isComplete
-                ? 'You may still read the transcript and the chair\'s reckoning.'
-                : 'You can observe the debate from the gallery.'}
+              {isComplete ? 'You can still read the results.' : 'You can watch from the sidelines.'}
             </p>
             {topic && (
               <div className="agora-card-sunken" style={{ padding: 14 }}>
@@ -93,11 +90,11 @@ export default function Join() {
             )}
             <button onClick={() => navigate(`/session/${joinCode}`)}
               className="agora-btn agora-btn-primary agora-btn-block">
-              {isComplete ? 'Read the verdict →' : 'Watch from the gallery →'}
+              {isComplete ? 'View results →' : 'Watch →'}
             </button>
             <button onClick={() => navigate('/')}
               style={{ fontSize: 13, color: 'var(--fg3)', background: 'none', border: 'none', cursor: 'pointer' }}>
-              Back to the floor
+              Back
             </button>
           </div>
         </main>
@@ -111,9 +108,8 @@ export default function Join() {
       <main style={{ flex: 1, display: 'grid', placeItems: 'center', padding: '40px 20px 80px' }}>
         <div style={{ width: '100%', maxWidth: 480, display: 'flex', flexDirection: 'column', gap: 22 }}>
           <div className="fade-up" style={{ textAlign: 'center' }}>
-            <span className="agora-eyebrow clay">You have been called to the stoa</span>
-            <h1 className="agora-display agora-display-md" style={{ marginTop: 10, fontStyle: 'italic' }}>
-              The floor awaits your answer.
+            <h1 className="agora-display agora-display-md" style={{ fontStyle: 'italic' }}>
+              You've been challenged.
             </h1>
           </div>
 
@@ -128,7 +124,7 @@ export default function Join() {
               color: 'var(--claude-clay-wash)', lineHeight: 1, fontWeight: 400,
               pointerEvents: 'none',
             }}>§</div>
-            <span className="agora-eyebrow clay">The proposition</span>
+            <span className="agora-eyebrow">Topic</span>
             {loading && !topic ? (
               <div className="agora-pulse-dots" style={{ justifyContent: 'center' }}>
                 <span /><span /><span />
@@ -155,13 +151,13 @@ export default function Join() {
             {formError && <p style={{ color: 'var(--oxblood)', fontSize: 13, margin: 0 }}>{formError}</p>}
             <button type="submit" disabled={loading}
               className="agora-btn agora-btn-primary agora-btn-lg agora-btn-block">
-              {loading ? 'Joining…' : 'Accept the challenge →'}
+              {loading ? 'Joining…' : 'Join →'}
             </button>
           </form>
 
           <button onClick={() => navigate('/')}
             style={{ fontSize: 13, color: 'var(--fg3)', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'center' }}>
-            Back to the floor
+            Back
           </button>
         </div>
       </main>
@@ -172,7 +168,7 @@ export default function Join() {
 function SessionTopNav({ code }: { code?: string }) {
   return (
     <nav className="agora-topnav">
-      <span className="agora-brand">Agora</span>
+      <span className="agora-brand">Vibeum Debatum</span>
       <div style={{ flex: 1 }} />
       {code && (
         <span className="agora-session-code">

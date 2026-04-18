@@ -71,7 +71,7 @@ export default function DebateReveal({ session }: Props) {
   return (
     <div className="agora-stage">
       <nav className="agora-topnav">
-        <span className="agora-brand">Agora</span>
+        <span className="agora-brand">Vibeum Debatum</span>
         <div style={{ flex: 1 }} />
         <span className="agora-session-code"><span style={{ opacity: 0.5 }}>#</span>{session.join_code}</span>
       </nav>
@@ -82,7 +82,7 @@ export default function DebateReveal({ session }: Props) {
       }}>
         {/* Topic + participants */}
         <div className="fade-up" style={{ textAlign: 'center' }}>
-          <span className="agora-eyebrow">The proposition</span>
+          <span className="agora-eyebrow">Topic</span>
           <h1 style={{
             fontFamily: 'var(--font-display)', fontSize: 'var(--fs-2xl)',
             fontWeight: 500, fontStyle: 'italic', marginTop: 8, lineHeight: 1.25,
@@ -106,7 +106,7 @@ export default function DebateReveal({ session }: Props) {
         {!allTurnsVisible && (
           <div style={{ display: 'flex', justifyContent: 'center', gap: 10, alignItems: 'center', color: 'var(--fg3)', fontSize: 13, paddingTop: 8 }}>
             <span className="agora-pulse-dots"><span /><span /><span /></span>
-            <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic' }}>The next argument is being drawn…</span>
+            <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 13 }}>Next argument incoming…</span>
           </div>
         )}
 
@@ -114,7 +114,7 @@ export default function DebateReveal({ session }: Props) {
         {waitingForJudgment && (
           <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, padding: '20px 0', color: 'var(--gold)' }}>
             <span className="agora-dots"><span /><span /><span /></span>
-            <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 15 }}>The chair is deliberating.</span>
+            <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 15 }}>Deliberating…</span>
           </div>
         )}
 
@@ -129,7 +129,7 @@ export default function DebateReveal({ session }: Props) {
         {/* Verdict */}
         {showVerdict && judgment && (
           <div ref={verdictRef} className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 18, marginTop: 8 }}>
-            <div className="agora-round-label" style={{ margin: '20px 0 4px' }}>The chair's reckoning</div>
+            <div className="agora-round-label" style={{ margin: '20px 0 4px' }}>Verdict</div>
             <ConsensusPanel
               judgment={judgment}
               forName={player_a.name}
@@ -152,12 +152,9 @@ function ConsensusPanel({ judgment, forName, againstName }: {
       <div className="agora-card-ink" style={{ display: 'flex', alignItems: 'center', gap: 18, position: 'relative', overflow: 'hidden' }}>
         <LaurelSvg size={48} color="var(--gold)" />
         <div style={{ flex: 1 }}>
-          <span className="agora-eyebrow gold">Laurel awarded</span>
-          <div style={{
-            fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 500,
-            lineHeight: 1.25, marginTop: 4,
-          }}>
-            The chair has reached its reckoning.
+          <span className="agora-eyebrow gold">Result</span>
+          <div style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 500, lineHeight: 1.25, marginTop: 4 }}>
+            The judge has reached a decision.
           </div>
         </div>
       </div>
@@ -190,7 +187,7 @@ function ConsensusPanel({ judgment, forName, againstName }: {
 
       {/* Consensus */}
       <div className="agora-card-sunken" style={{ borderLeft: '2px solid var(--claude-clay)' }}>
-        <span className="agora-eyebrow clay">The chair's consensus</span>
+        <span className="agora-eyebrow clay">Consensus</span>
         <p style={{
           fontFamily: 'var(--font-serif)', fontSize: 17, color: 'var(--fg1)',
           lineHeight: 1.65, margin: '10px 0 0', fontStyle: 'italic',
@@ -229,14 +226,14 @@ function DebatingLoader({ topic, code }: { topic: string; code: string }) {
   return (
     <div className="agora-stage">
       <nav className="agora-topnav">
-        <span className="agora-brand">Agora</span>
+        <span className="agora-brand">Vibeum Debatum</span>
         <div style={{ flex: 1 }} />
         <span className="agora-session-code"><span style={{ opacity: 0.5 }}>#</span>{code}</span>
       </nav>
       <main style={{ flex: 1, display: 'grid', placeItems: 'center', padding: '40px 20px' }}>
         <div style={{ width: '100%', maxWidth: 540, display: 'flex', flexDirection: 'column', gap: 32, alignItems: 'center' }}>
           <div className="fade-up" style={{ textAlign: 'center', maxWidth: 460 }}>
-            <span className="agora-eyebrow">The proposition</span>
+            <span className="agora-eyebrow">Topic</span>
             <p style={{ fontFamily: 'var(--font-serif)', fontSize: 19, color: 'var(--fg1)', margin: '6px 0 0', lineHeight: 1.35, fontStyle: 'italic' }}>
               "{topic}"
             </p>
@@ -245,9 +242,9 @@ function DebatingLoader({ topic, code }: { topic: string; code: string }) {
           <div className="fade-up" style={{ display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'center', animationDelay: '100ms' }}>
             <span className="agora-dots"><span /><span /><span /></span>
             <h2 className="agora-display agora-display-sm" style={{ fontStyle: 'italic', textAlign: 'center' }}>
-              The proxies are arguing.
+              Generating debate…
             </h2>
-            <p style={{ color: 'var(--fg3)', fontSize: 14, margin: 0 }}>This ordinarily takes about thirty seconds.</p>
+            <p style={{ color: 'var(--fg3)', fontSize: 14, margin: 0 }}>Usually ~30 seconds.</p>
           </div>
 
           <div className="fade-up" style={{ width: '100%', maxWidth: 360, animationDelay: '180ms' }}>
@@ -255,7 +252,7 @@ function DebatingLoader({ topic, code }: { topic: string; code: string }) {
               <div className="agora-progress-fill" style={{ width: `${progress}%` }} />
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 6, fontSize: 11, color: 'var(--fg4)' }}>
-              <span style={{ fontFamily: 'var(--font-mono)', letterSpacing: '0.15em', textTransform: 'uppercase' }}>Assembling the stoa</span>
+              <span style={{ fontFamily: 'var(--font-mono)', letterSpacing: '0.15em', textTransform: 'uppercase' }}>Working</span>
               <span style={{ fontFamily: 'var(--font-mono)' }}>{progress}%</span>
             </div>
           </div>
@@ -311,7 +308,7 @@ function Actions({ session }: { session: Session }) {
       </button>
       <div style={{ flex: 1 }} />
       <button onClick={() => navigate('/')} className="agora-btn agora-btn-primary">
-        Pose another →
+        New debate →
       </button>
     </div>
   )

@@ -37,7 +37,7 @@ export default function Lobby({ session }: Props) {
   return (
     <div className="agora-stage">
       <nav className="agora-topnav">
-        <span className="agora-brand">Agora</span>
+        <span className="agora-brand">Vibeum Debatum</span>
         <div style={{ flex: 1 }} />
         <span className="agora-session-code">
           <span style={{ opacity: 0.5 }}>#</span>{session.join_code}
@@ -50,8 +50,7 @@ export default function Lobby({ session }: Props) {
       }}>
         {/* Topic */}
         <div className="fade-up" style={{ textAlign: 'center', maxWidth: 600 }}>
-          <span className="agora-eyebrow clay">The floor is open</span>
-          <h1 className="agora-display agora-display-md" style={{ marginTop: 10, fontStyle: 'italic' }}>
+          <h1 className="agora-display agora-display-md" style={{ fontStyle: 'italic' }}>
             "{session.title}"
           </h1>
         </div>
@@ -62,7 +61,7 @@ export default function Lobby({ session }: Props) {
           display: 'flex', flexDirection: 'column', gap: 14, alignItems: 'center', textAlign: 'center',
           animationDelay: '100ms',
         }}>
-          <span className="agora-eyebrow">Share this code with your opponent</span>
+          <span className="agora-eyebrow">Invite code</span>
           <button className="agora-joincode" onClick={copyCode} title="Click to copy">
             {session.join_code}
           </button>
@@ -123,7 +122,7 @@ export default function Lobby({ session }: Props) {
             className="agora-btn agora-btn-ghost agora-btn-sm fade-up"
             style={{ animationDelay: '260ms', color: 'var(--fg3)' }}
           >
-            {cancelling ? 'Withdrawing…' : 'Withdraw the proposition'}
+            {cancelling ? 'Cancelling…' : 'Cancel session'}
           </button>
         )}
       </main>

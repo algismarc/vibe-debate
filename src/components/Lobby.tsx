@@ -28,7 +28,7 @@ export default function Lobby({ session }: Props) {
   }
 
   async function handleCancel() {
-    if (!confirm('Withdraw this proposition? Your opponent\'s link will stop working.')) return
+    if (!confirm('Cancel this session? Your opponent\'s link will stop working.')) return
     setCancelling(true)
     await cancelSession()
     navigate('/')

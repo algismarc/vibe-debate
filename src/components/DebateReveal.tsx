@@ -148,17 +148,6 @@ function ConsensusPanel({ judgment, forName, againstName }: {
 }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-      {/* Laurel award */}
-      <div className="agora-card-ink" style={{ display: 'flex', alignItems: 'center', gap: 18, position: 'relative', overflow: 'hidden' }}>
-        <LaurelSvg size={48} color="var(--gold)" />
-        <div style={{ flex: 1 }}>
-          <span className="agora-eyebrow gold">Result</span>
-          <div style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 500, lineHeight: 1.25, marginTop: 4 }}>
-            The judge has reached a decision.
-          </div>
-        </div>
-      </div>
-
       {/* Best-of grids */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 14 }} className="verdict-grid">
         <div className="agora-card" style={{ borderLeft: '3px solid var(--laurel)' }}>
@@ -166,7 +155,7 @@ function ConsensusPanel({ judgment, forName, againstName }: {
           <ul style={{ display: 'flex', flexDirection: 'column', gap: 10, listStyle: 'none', padding: 0, margin: '10px 0 0' }}>
             {judgment.for_highlights.map((point, i) => (
               <li key={i} style={{ display: 'flex', gap: 8, fontFamily: 'var(--font-serif)', fontSize: 15, color: 'var(--fg1)', lineHeight: 1.55 }}>
-                <span style={{ color: 'var(--laurel)', flexShrink: 0, fontWeight: 600 }}>§</span>
+                <span style={{ color: 'var(--laurel)', flexShrink: 0 }}>·</span>
                 <span>{point}</span>
               </li>
             ))}
@@ -177,7 +166,7 @@ function ConsensusPanel({ judgment, forName, againstName }: {
           <ul style={{ display: 'flex', flexDirection: 'column', gap: 10, listStyle: 'none', padding: 0, margin: '10px 0 0' }}>
             {judgment.against_highlights.map((point, i) => (
               <li key={i} style={{ display: 'flex', gap: 8, fontFamily: 'var(--font-serif)', fontSize: 15, color: 'var(--fg1)', lineHeight: 1.55 }}>
-                <span style={{ color: 'var(--oxblood)', flexShrink: 0, fontWeight: 600 }}>§</span>
+                <span style={{ color: 'var(--oxblood)', flexShrink: 0 }}>·</span>
                 <span>{point}</span>
               </li>
             ))}
@@ -284,7 +273,7 @@ function Actions({ session }: { session: Session }) {
     const forName = player_a.name
     const againstName = player_b?.name ?? 'Opponent'
     const text = [
-      `Agora: "${title}"`,
+      `VibeDebate: "${title}"`,
       ``,
       `${forName} (FOR) vs ${againstName} (AGAINST)`,
       ``,

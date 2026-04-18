@@ -17,7 +17,7 @@ export default function Home() {
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault()
     setCreateError('')
-    if (!title.trim()) return setCreateError('Enter a proposition to debate.')
+    if (!title.trim()) return setCreateError('Enter a topic.')
     if (!name.trim()) return setCreateError('Enter your name.')
     try {
       const code = await createSession(title.trim(), name.trim(), {
@@ -54,6 +54,9 @@ export default function Home() {
             <h1 className="agora-display agora-display-lg" style={{ fontStyle: 'italic' }}>
               VibeDebate
             </h1>
+            <p style={{ fontFamily: 'var(--font-sans)', fontSize: 14, color: 'var(--fg3)', margin: 0, letterSpacing: '0.01em' }}>
+              Intelligent Consensus Discovery
+            </p>
           </div>
 
           {/* Pose form */}

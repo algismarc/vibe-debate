@@ -133,25 +133,6 @@ function TopNav() {
   )
 }
 
-function LaurelSvg({ size = 44, color = 'var(--gold)' }: { size?: number; color?: string }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 64 64" fill="none"
-      stroke={color} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M32 54 C 22 54 14 46 14 34 C 14 24 20 18 28 18" />
-      <path d="M32 54 C 42 54 50 46 50 34 C 50 24 44 18 36 18" />
-      {[0,1,2,3,4].map(i => {
-        const y = 22 + i * 6
-        return <g key={i}>
-          <path d={`M ${16+i} ${y} q -4 -2 -6 2 q 3 4 7 1`} />
-          <path d={`M ${48-i} ${y} q 4 -2 6 2 q -3 4 -7 1`} />
-        </g>
-      })}
-      <path d="M32 18 L32 12" />
-      <circle cx="32" cy="10" r="1.5" fill={color} />
-    </svg>
-  )
-}
-
 function ColumnFlourish({ style }: { style?: React.CSSProperties }) {
   return (
     <svg viewBox="0 0 120 400" style={{ ...style, pointerEvents: 'none' }}
